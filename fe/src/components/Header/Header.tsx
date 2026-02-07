@@ -38,7 +38,7 @@ const Header = () => {
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
           <div className={styles.logoIcon}>🎓</div>
-          <span className={styles.logoText}>LearnHub</span>
+          <span className={styles.logoText}>Classroom Smart</span>
         </Link>
 
         <nav className={styles.nav}>

@@ -35,7 +35,13 @@ const LoginPage = () => {
       if (response.success && response.data.token) {
         await login(response.data.token, response.data.refreshToken)
         toast.success('Đăng nhập thành công! 🎉')
-        navigate('/')
+        
+        const userResponse = await authAPI.getCurrentUser()
+        if (userResponse.success && userResponse.data.role === 'ADMIN') {
+          navigate('/admin')
+        } else {
+          navigate('/')
+        }
       } else {
         setError(response.message || 'Đăng nhập thất bại')
         toast.error(response.message || 'Đăng nhập thất bại')

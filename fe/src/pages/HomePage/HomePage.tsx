@@ -257,7 +257,7 @@ const HomePage = () => {
       <footer className={styles.footer}>
         <div className={styles.footerContent}>
           <div className={styles.footerBrand}>
-            <h3>🎓 LearnHub</h3>
+            <h3>🎓 Classroom Smart</h3>
             <p>Empowering learners worldwide with AI-powered education platform</p>
             <div className={styles.socialLinks}>
               <a href="#" aria-label="Facebook">📘</a>
@@ -298,7 +298,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className={styles.footerBottom}>
-          <p>© 2026 LearnHub. All rights reserved. Built with ❤️ for learners worldwide.</p>
+          <p>© 2026 Classroom Smart. All rights reserved. Built with ❤️ for learners worldwide.</p>
         </div>
       </footer>
     </div>

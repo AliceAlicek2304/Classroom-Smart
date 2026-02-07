@@ -1,0 +1,179 @@
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.sidebar {
+  width: 280px;
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebarHeader {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: white;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.logoSubtext {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  margin-top: 0.25rem;
+}
+
+.nav {
+  flex: 1;
+  padding: 1.5rem 0;
+}
+
+.navSection {
+  margin-bottom: 2rem;
+}
+
+.navLabel {
+  padding: 0 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  color: #cbd5e0;
+  transition: all 0.2s;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.navLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.navLink.active {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.2) 0%, transparent 100%);
+  color: white;
+  border-left: 3px solid #667eea;
+}
+
+.navIcon {
+  font-size: 1.25rem;
+  width: 24px;
+  text-align: center;
+}
+
+.sidebarFooter {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.userName {
+  flex: 1;
+}
+
+.userName h4 {
+  font-size: 0.9rem;
+  margin: 0;
+  color: white;
+}
+
+.userName p {
+  font-size: 0.75rem;
+  margin: 0;
+  color: #718096;
+}
+
+.logoutBtn {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #fca5a5;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.logoutBtn:hover {
+  background: rgba(220, 38, 38, 0.3);
+  color: #fecaca;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 280px;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 240px;
+  }
+  
+  .mainContent {
+    margin-left: 240px;
+    padding: 1.5rem;
+  }
+}
