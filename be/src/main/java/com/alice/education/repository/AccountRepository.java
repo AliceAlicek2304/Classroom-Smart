@@ -1,11 +1,13 @@
 package com.alice.education.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.alice.education.model.Account;
+import com.alice.education.model.Role;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
@@ -17,4 +19,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Boolean existsByUsername(String username);
     
     Boolean existsByEmail(String email);
+    
+    List<Account> findByRole(Role role);
 }

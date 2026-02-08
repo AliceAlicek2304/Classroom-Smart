@@ -1,0 +1,187 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 450px;
+  width: 100%;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+  text-align: center;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  animation: iconBounce 0.5s ease-out;
+}
+
+@keyframes iconBounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.icon.danger {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+.icon.warning {
+  background: linear-gradient(135deg, #ffd93d 0%, #ff9838 100%);
+}
+
+.icon.info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1rem 0;
+}
+
+.message {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btnCancel,
+.btnConfirm {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.btnCancel {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.btnCancel:hover {
+  background: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+.btnConfirm {
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btnConfirm.danger {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+.btnConfirm.danger:hover {
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  transform: translateY(-2px);
+}
+
+.btnConfirm.warning {
+  background: linear-gradient(135deg, #ffd93d 0%, #ff9838 100%);
+  color: #1a202c;
+}
+
+.btnConfirm.warning:hover {
+  box-shadow: 0 8px 25px rgba(255, 217, 61, 0.4);
+  transform: translateY(-2px);
+}
+
+.btnConfirm.info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.btnConfirm.info:hover {
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .message {
+    font-size: 0.95rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .btnCancel,
+  .btnConfirm {
+    width: 100%;
+  }
+}

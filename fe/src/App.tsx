@@ -10,6 +10,8 @@ import AdminDashboard from './pages/Admin/AdminDashboard'
 import SubjectsPage from './pages/Admin/SubjectsPage'
 import TextbooksPage from './pages/Admin/TextbooksPage'
 import ChaptersPage from './pages/Admin/ChaptersPage'
+import TeacherDashboard from './pages/Teacher/TeacherDashboard'
+import TeacherClassroomsPage from './pages/Teacher/TeacherClassroomsPage'
 import './App.css'
 
 function App() {
@@ -51,6 +53,17 @@ function App() {
             <Route path="/admin/students" element={
               <ProtectedRoute requiredRole="ADMIN">
                 <div>Students Management - Coming Soon</div>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/teacher" element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <TeacherDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/teacher/classrooms" element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <TeacherClassroomsPage />
               </ProtectedRoute>
             } />
           </Routes>

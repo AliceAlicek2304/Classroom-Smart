@@ -20,8 +20,12 @@ public interface ClassStudentRepository extends JpaRepository<ClassStudent, Long
     
     boolean existsByClassroomIdAndStudentId(Long classroomId, Long studentId);
     
+    boolean existsByClassroomIdAndStudentIdAndIsActive(Long classroomId, Long studentId, Boolean isActive);
+    
     @Query("SELECT cs FROM ClassStudent cs WHERE cs.classroom.id = :classroomId AND cs.isActive = true")
     List<ClassStudent> findActiveStudentsByClassroomId(Long classroomId);
     
     long countByClassroomId(Long classroomId);
+    
+    long countByClassroomIdAndIsActive(Long classroomId, Boolean isActive);
 }

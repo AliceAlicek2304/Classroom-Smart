@@ -16,7 +16,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const handleLogout = () => {
     logout()
     toast.success('Đăng xuất thành công!')
-    navigate('/login')
+    navigate('/')
   }
 
   const getInitials = (name?: string) => {

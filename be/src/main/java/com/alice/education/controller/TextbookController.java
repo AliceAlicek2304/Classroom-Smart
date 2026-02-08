@@ -32,7 +32,7 @@ public class TextbookController {
     private TextbookService textbookService;
     
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TextbookResponse>> createTextbook(@Valid @RequestBody TextbookRequest request) {
         try {
             TextbookResponse response = textbookService.createTextbook(request);
@@ -98,7 +98,7 @@ public class TextbookController {
     }
     
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TextbookResponse>> updateTextbook(
             @PathVariable Long id, 
             @Valid @RequestBody TextbookRequest request) {
@@ -111,7 +111,7 @@ public class TextbookController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteTextbook(@PathVariable Long id) {
         try {
             textbookService.deleteTextbook(id);

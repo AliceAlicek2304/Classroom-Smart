@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
+import { useConfirm } from '../../hooks/useConfirm'
 import chapterAPI, { type Chapter, type ChapterRequest } from '../../services/chapterService'
 import textbookAPI, { type Textbook } from '../../services/textbookService'
 import styles from './Admin.module.css'
@@ -12,6 +13,7 @@ const ChaptersPage = () => {
   const [showModal, setShowModal] = useState(false)
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null)
   const toast = useToast()
+  const { confirm, ConfirmDialog } = useConfirm()
 
   const [formData, setFormData] = useState<ChapterRequest>({
     title: '',
@@ -105,7 +107,15 @@ const ChaptersPage = () => {
   }
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Bạn có chắc muốn xóa chương này?')) return
+    const confirmed = await confirm({
+      title: 'Xóa chương',
+      message: 'Bạn có chắc muốn xóa chương này?',
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+      variant: 'danger'
+    })
+    
+    if (!confirmed) return
     
     try {
       const response = await chapterAPI.delete(id)
@@ -122,16 +132,13 @@ const ChaptersPage = () => {
     <AdminLayout>
       <div className={styles.page}>
         <div className={styles.header}>
-          <div className={styles.headerLeft}>
-            <h1>📝 Chapters Management</h1>
-            <p>Quản lý các chương sách trong hệ thống</p>
+          <div>
+            <h1 className={styles.title}>Chapters Management</h1>
+            <p className={styles.subtitle}>Quản lý các chương sách trong hệ thống</p>
           </div>
-          <div className={styles.headerRight}>
-            <button className={styles.btnPrimary} onClick={handleCreate}>
-              <span>➕</span>
-              Thêm chương
-            </button>
-          </div>
+          <button className={styles.btnCreate} onClick={handleCreate}>
+            <span>➕</span> Thêm chương
+          </button>
         </div>
 
         {loading ? (
@@ -186,15 +193,14 @@ const ChaptersPage = () => {
         )}
 
         {showModal && (
-          <div className={styles.modal} onClick={() => setShowModal(false)}>
-            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
               <div className={styles.modalHeader}>
                 <h2>{editingChapter ? 'Chỉnh sửa chương' : 'Thêm chương mới'}</h2>
-                <button className={styles.closeBtn} onClick={() => setShowModal(false)}>×</button>
+                <button className={styles.btnClose} onClick={() => setShowModal(false)}>✕</button>
               </div>
               <form onSubmit={handleSubmit}>
-                <div className={styles.modalBody}>
-                  <div className={styles.form}>
+                <div className={styles.form}>
                     <div className={styles.formGroup}>
                       <label>Sách giáo khoa *</label>
                       <select
@@ -269,12 +275,11 @@ const ChaptersPage = () => {
                       </label>
                     </div>
                   </div>
-                </div>
-                <div className={styles.modalFooter}>
-                  <button type="button" className={styles.btnSecondary} onClick={() => setShowModal(false)}>
+                <div className={styles.formActions}>
+                  <button type="button" className={styles.btnCancel} onClick={() => setShowModal(false)}>
                     Hủy
                   </button>
-                  <button type="submit" className={styles.btnPrimary}>
+                  <button type="submit" className={styles.btnSubmit}>
                     {editingChapter ? 'Cập nhật' : 'Tạo mới'}
                   </button>
                 </div>
@@ -282,6 +287,7 @@ const ChaptersPage = () => {
             </div>
           </div>
         )}
+        <ConfirmDialog />
       </div>
     </AdminLayout>
   )

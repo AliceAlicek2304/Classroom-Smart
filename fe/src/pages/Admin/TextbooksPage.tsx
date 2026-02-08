@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
+import { useConfirm } from '../../hooks/useConfirm'
 import textbookAPI, { type Textbook, type TextbookRequest } from '../../services/textbookService'
 import subjectAPI, { type Subject } from '../../services/subjectService'
 import styles from './Admin.module.css'
@@ -13,6 +14,7 @@ const TextbooksPage = () => {
   const [editingTextbook, setEditingTextbook] = useState<Textbook | null>(null)
   const [searchKeyword, setSearchKeyword] = useState('')
   const toast = useToast()
+  const { confirm, ConfirmDialog } = useConfirm()
 
   const [formData, setFormData] = useState<TextbookRequest>({
     title: '',
@@ -121,7 +123,15 @@ const TextbooksPage = () => {
   }
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Bạn có chắc muốn xóa sách giáo khoa này?')) return
+    const confirmed = await confirm({
+      title: 'Xóa sách giáo khoa',
+      message: 'Bạn có chắc muốn xóa sách giáo khoa này?',
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+      variant: 'danger'
+    })
+    
+    if (!confirmed) return
     
     try {
       const response = await textbookAPI.delete(id)
@@ -138,28 +148,26 @@ const TextbooksPage = () => {
     <AdminLayout>
       <div className={styles.page}>
         <div className={styles.header}>
-          <div className={styles.headerLeft}>
-            <h1>📖 Textbooks Management</h1>
-            <p>Quản lý sách giáo khoa trong hệ thống</p>
+          <div>
+            <h1 className={styles.title}>Textbooks Management</h1>
+            <p className={styles.subtitle}>Quản lý sách giáo khoa trong hệ thống</p>
           </div>
-          <div className={styles.headerRight}>
-            <div className={styles.searchBox}>
-              <input
-                type="text"
-                placeholder="Tìm kiếm sách..."
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-              <button onClick={handleSearch} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>
-                🔍
-              </button>
-            </div>
-            <button className={styles.btnPrimary} onClick={handleCreate}>
-              <span>➕</span>
-              Thêm sách
-            </button>
-          </div>
+          <button className={styles.btnCreate} onClick={handleCreate}>
+            <span>➕</span> Thêm sách
+          </button>
+        </div>
+
+        <div className={styles.searchBox}>
+          <input
+            type="text"
+            placeholder="Tìm kiếm sách..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <button onClick={handleSearch}>
+            🔍 Tìm kiếm
+          </button>
         </div>
 
         {loading ? (
@@ -216,15 +224,14 @@ const TextbooksPage = () => {
         )}
 
         {showModal && (
-          <div className={styles.modal} onClick={() => setShowModal(false)}>
-            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
               <div className={styles.modalHeader}>
                 <h2>{editingTextbook ? 'Chỉnh sửa sách giáo khoa' : 'Thêm sách giáo khoa mới'}</h2>
-                <button className={styles.closeBtn} onClick={() => setShowModal(false)}>×</button>
+                <button className={styles.btnClose} onClick={() => setShowModal(false)}>✕</button>
               </div>
               <form onSubmit={handleSubmit}>
-                <div className={styles.modalBody}>
-                  <div className={styles.form}>
+                <div className={styles.form}>
                     <div className={styles.formGroup}>
                       <label>Tên sách *</label>
                       <input
@@ -301,12 +308,11 @@ const TextbooksPage = () => {
                       </label>
                     </div>
                   </div>
-                </div>
-                <div className={styles.modalFooter}>
-                  <button type="button" className={styles.btnSecondary} onClick={() => setShowModal(false)}>
+                <div className={styles.formActions}>
+                  <button type="button" className={styles.btnCancel} onClick={() => setShowModal(false)}>
                     Hủy
                   </button>
-                  <button type="submit" className={styles.btnPrimary}>
+                  <button type="submit" className={styles.btnSubmit}>
                     {editingTextbook ? 'Cập nhật' : 'Tạo mới'}
                   </button>
                 </div>
@@ -314,6 +320,7 @@ const TextbooksPage = () => {
             </div>
           </div>
         )}
+        <ConfirmDialog />
       </div>
     </AdminLayout>
   )

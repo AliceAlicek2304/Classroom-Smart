@@ -1,7 +1,7 @@
 package com.alice.education.config;
 
-import com.alice.education.security.JwtAuthenticationFilter;
-import com.alice.education.security.CustomUserDetailsService;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import com.alice.education.security.CustomUserDetailsService;
+import com.alice.education.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -81,6 +82,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/auth/test").permitAll()
                     .requestMatchers("/api/auth/me").authenticated()
                     .requestMatchers("/api/auth/change-password").authenticated()
+                    .requestMatchers("/api/auth/students").authenticated()
                     .requestMatchers("/api/subjects/**").authenticated()
                     .requestMatchers("/api/textbooks/**").authenticated()
                     .requestMatchers("/api/chapters/**").authenticated()

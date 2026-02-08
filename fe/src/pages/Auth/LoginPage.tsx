@@ -37,8 +37,15 @@ const LoginPage = () => {
         toast.success('Đăng nhập thành công! 🎉')
         
         const userResponse = await authAPI.getCurrentUser()
-        if (userResponse.success && userResponse.data.role === 'ADMIN') {
-          navigate('/admin')
+        if (userResponse.success) {
+          const role = userResponse.data.role
+          if (role === 'ADMIN') {
+            navigate('/admin')
+          } else if (role === 'TEACHER') {
+            navigate('/teacher')
+          } else {
+            navigate('/')
+          }
         } else {
           navigate('/')
         }

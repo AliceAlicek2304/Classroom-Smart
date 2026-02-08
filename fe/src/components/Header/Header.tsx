@@ -79,6 +79,18 @@ const Header = () => {
                   </div>
                 </div>
                 <div className={styles.dropdownDivider}></div>
+                {user.role === 'ADMIN' && (
+                  <Link to="/admin" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+                    <span className={styles.dropdownIcon}>👑</span>
+                    Admin Dashboard
+                  </Link>
+                )}
+                {user.role === 'TEACHER' && (
+                  <Link to="/teacher" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+                    <span className={styles.dropdownIcon}>🎓</span>
+                    Dashboard
+                  </Link>
+                )}
                 <Link to="/profile" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
                   <span className={styles.dropdownIcon}>👤</span>
                   Hồ sơ của tôi

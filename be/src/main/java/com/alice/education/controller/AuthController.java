@@ -1,12 +1,31 @@
 package com.alice.education.controller;
 
-import com.alice.education.dto.*;
-import com.alice.education.service.AuthService;
-import jakarta.mail.MessagingException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alice.education.dto.AccountResponse;
+import com.alice.education.dto.ApiResponse;
+import com.alice.education.dto.AuthResponse;
+import com.alice.education.dto.ChangePasswordRequest;
+import com.alice.education.dto.ForgotPasswordRequest;
+import com.alice.education.dto.LoginRequest;
+import com.alice.education.dto.MessageResponse;
+import com.alice.education.dto.RegisterRequest;
+import com.alice.education.dto.ResetPasswordRequest;
+import com.alice.education.dto.StudentResponse;
+import com.alice.education.service.AuthService;
+
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -140,6 +159,17 @@ public class AuthController {
             } else {
                 return ApiResponse.error(response.getMessage());
             }
+        } catch (Exception e) {
+            return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
+        }
+    }
+    
+    @GetMapping("/students")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<java.util.List<StudentResponse>>> getAllStudents() {
+        try {
+            java.util.List<StudentResponse> students = authService.getAllStudents();
+            return ApiResponse.success("Lấy danh sách học sinh thành công!", students);
         } catch (Exception e) {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }

@@ -1,6 +1,7 @@
 package com.alice.education.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,14 +154,27 @@ public class ClassroomService {
             throw new RuntimeException("Only students (CUSTOMER role) can be added to classrooms");
         }
         
-        if (classStudentRepository.existsByClassroomIdAndStudentId(classroomId, request.getStudentId())) {
+        // Check if student is already ACTIVE in this classroom
+        if (classStudentRepository.existsByClassroomIdAndStudentIdAndIsActive(classroomId, request.getStudentId(), true)) {
             throw new RuntimeException("Student already enrolled in this classroom");
         }
         
-        ClassStudent classStudent = new ClassStudent(classroom, student);
-        classStudent.setIsActive(true);
-        ClassStudent saved = classStudentRepository.save(classStudent);
+        // Check if there's an inactive record - reactivate it
+        Optional<ClassStudent> existingRecord = classStudentRepository
+            .findByClassroomIdAndStudentId(classroomId, request.getStudentId());
         
+        ClassStudent classStudent;
+        if (existingRecord.isPresent()) {
+            // Reactivate existing record
+            classStudent = existingRecord.get();
+            classStudent.setIsActive(true);
+        } else {
+            // Create new record
+            classStudent = new ClassStudent(classroom, student);
+            classStudent.setIsActive(true);
+        }
+        
+        ClassStudent saved = classStudentRepository.save(classStudent);
         return mapToStudentResponse(saved);
     }
     
@@ -192,7 +206,7 @@ public class ClassroomService {
         response.setTeacherName(classroom.getTeacher().getFullName());
         response.setSubjectId(classroom.getSubject().getId());
         response.setSubjectName(classroom.getSubject().getName());
-        response.setStudentCount((int) classStudentRepository.countByClassroomId(classroom.getId()));
+        response.setStudentCount((int) classStudentRepository.countByClassroomIdAndIsActive(classroom.getId(), true));
         response.setCreatedAt(classroom.getCreatedAt());
         response.setUpdatedAt(classroom.getUpdatedAt());
         return response;

@@ -1,10 +1,7 @@
 package com.alice.education.service;
 
-import com.alice.education.dto.*;
-import com.alice.education.model.*;
-import com.alice.education.repository.*;
-import com.alice.education.security.JwtUtils;
-import jakarta.mail.MessagingException;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,7 +12,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import com.alice.education.dto.AccountResponse;
+import com.alice.education.dto.AuthResponse;
+import com.alice.education.dto.ChangePasswordRequest;
+import com.alice.education.dto.ForgotPasswordRequest;
+import com.alice.education.dto.LoginRequest;
+import com.alice.education.dto.MessageResponse;
+import com.alice.education.dto.RegisterRequest;
+import com.alice.education.dto.ResetPasswordRequest;
+import com.alice.education.dto.StudentResponse;
+import com.alice.education.model.Account;
+import com.alice.education.model.PasswordResetToken;
+import com.alice.education.model.Provider;
+import com.alice.education.model.Role;
+import com.alice.education.model.VerificationToken;
+import com.alice.education.repository.AccountRepository;
+import com.alice.education.repository.PasswordResetTokenRepository;
+import com.alice.education.repository.VerificationTokenRepository;
+import com.alice.education.security.JwtUtils;
+
+import jakarta.mail.MessagingException;
 
 @Service
 public class AuthService {
@@ -290,5 +306,23 @@ public class AuthService {
         response.setCreatedAt(account.getCreatedAt());
         response.setEmailVerified(account.getIsActive());
         return response;
+    }
+    
+    public java.util.List<StudentResponse> getAllStudents() {
+        java.util.List<Account> students = accountRepository.findByRole(Role.CUSTOMER);
+        return students.stream()
+                .map(this::convertToStudentResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
+    
+    private StudentResponse convertToStudentResponse(Account account) {
+        return new StudentResponse(
+            account.getId(),
+            account.getUsername(),
+            account.getFullName(),
+            account.getEmail(),
+            account.getBirthDay(),
+            account.getIsActive()
+        );
     }
 }

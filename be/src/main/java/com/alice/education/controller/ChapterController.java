@@ -31,7 +31,7 @@ public class ChapterController {
     private ChapterService chapterService;
     
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ChapterResponse>> createChapter(@Valid @RequestBody ChapterRequest request) {
         try {
             ChapterResponse response = chapterService.createChapter(request);
@@ -86,7 +86,7 @@ public class ChapterController {
     }
     
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ChapterResponse>> updateChapter(
             @PathVariable Long id, 
             @Valid @RequestBody ChapterRequest request) {
@@ -99,7 +99,7 @@ public class ChapterController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteChapter(@PathVariable Long id) {
         try {
             chapterService.deleteChapter(id);

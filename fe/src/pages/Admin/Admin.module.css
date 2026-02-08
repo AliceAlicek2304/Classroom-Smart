@@ -10,6 +10,41 @@
   margin-bottom: 2rem;
 }
 
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.btnCreate {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnCreate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
 .headerLeft h1 {
   font-size: 2rem;
   color: #1a202c;
@@ -28,25 +63,47 @@
 
 .searchBox {
   display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 12px;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  min-width: 300px;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
 }
 
 .searchBox input {
-  border: none;
-  outline: none;
   flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 0.95rem;
   color: #1a202c;
-  padding: 0.5rem;
+  transition: all 0.2s;
+  background: white;
+}
+
+.searchBox input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .searchBox input::placeholder {
   color: #a0aec0;
+}
+
+.searchBox button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.searchBox button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
 .btnPrimary {
@@ -110,6 +167,31 @@
   background: #f7fafc;
 }
 
+.cellBold {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.badgeActive,
+.badgeInactive {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badgeActive {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.badgeInactive {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -120,13 +202,13 @@
 }
 
 .badge.active {
-  background: #d4edda;
-  color: #155724;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
 }
 
 .badge.inactive {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
 }
 
 .actions {
@@ -135,7 +217,8 @@
 }
 
 .btnEdit,
-.btnDelete {
+.btnDelete,
+.btnView {
   padding: 0.5rem 0.75rem;
   border: none;
   border-radius: 8px;
@@ -163,73 +246,114 @@
   background: #ffcccc;
 }
 
-.modal {
+.btnView {
+  background: #f0e6ff;
+  color: #6b46c1;
+}
+
+.btnView:hover {
+  background: #e0d1f9;
+}
+
+/* Modal Styles */
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   padding: 1rem;
+  backdrop-filter: blur(4px);
 }
 
-.modalContent {
+.modal {
   background: white;
-  border-radius: 16px;
-  max-width: 600px;
+  border-radius: 20px;
+  max-width: 700px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modalHeader {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 1.5rem 2rem;
+  border-bottom: 2px solid #f0f0f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px 20px 0 0;
 }
 
 .modalHeader h2 {
   font-size: 1.5rem;
-  color: #1a202c;
   margin: 0;
+  font-weight: 700;
 }
 
-.closeBtn {
-  background: none;
+.btnClose {
+  background: rgba(255, 255, 255, 0.2);
   border: none;
   font-size: 1.5rem;
-  color: #718096;
+  color: white;
   cursor: pointer;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  transition: all 0.2s;
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
-.closeBtn:hover {
-  background: #f7fafc;
-  color: #1a202c;
+.btnClose:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
 }
 
-.modalBody {
-  padding: 1.5rem;
+.btnClose:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
 }
 
+/* Form Styles */
 .form {
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
 }
 
 .formGroup {
@@ -241,18 +365,20 @@
 .formGroup label {
   font-weight: 600;
   color: #2d3748;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .formGroup input,
 .formGroup textarea,
 .formGroup select {
-  padding: 0.75rem;
+  padding: 0.875rem 1rem;
   border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.95rem;
   color: #1a202c;
   transition: all 0.2s;
+  font-family: inherit;
+  background: white;
 }
 
 .formGroup input:focus,
@@ -266,7 +392,56 @@
 .formGroup textarea {
   min-height: 100px;
   resize: vertical;
-  font-family: inherit;
+}
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+  color: #a0aec0;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1.5rem 2rem;
+  border-top: 2px solid #f0f0f0;
+  background: #f9fafb;
+  border-radius: 0 0 20px 20px;
+}
+
+.btnCancel {
+  padding: 0.75rem 1.75rem;
+  background: white;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.btnCancel:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+  transform: translateY(-2px);
+}
+
+.btnSubmit {
+  padding: 0.75rem 1.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.btnSubmit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
 .checkbox {
@@ -279,6 +454,12 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
+  accent-color: #667eea;
+}
+
+.checkbox label {
+  cursor: pointer;
+  user-select: none;
 }
 
 .modalFooter {
@@ -305,6 +486,26 @@
   background: #edf2f7;
 }
 
+.btnPrimary {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
 .empty {
   text-align: center;
   padding: 4rem 2rem;
@@ -317,9 +518,49 @@
   color: #4a5568;
 }
 
+.empty p {
+  color: #a0aec0;
+  margin-bottom: 1.5rem;
+}
+
 .loading {
   text-align: center;
   padding: 4rem 2rem;
   color: #718096;
   font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .table {
+    font-size: 0.875rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.75rem 1rem;
+  }
+
+  .modal {
+    max-width: 100%;
+    margin: 1rem;
+  }
+
+  .form {
+    padding: 1.5rem;
+  }
+
+  .formActions {
+    padding: 1rem 1.5rem;
+  }
 }
