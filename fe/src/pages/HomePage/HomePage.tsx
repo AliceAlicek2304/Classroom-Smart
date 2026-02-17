@@ -1,9 +1,21 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../../components/Header/Header'
+import { AuthModal } from '../../components/Auth'
 import styles from './HomePage.module.css'
 
 const HomePage = () => {
+  const [authModal, setAuthModal] = useState<{isOpen: boolean, mode: 'login' | 'register'}>({
+    isOpen: false,
+    mode: 'login'
+  })
+
+  const openAuthModal = (mode: 'login' | 'register') => {
+    setAuthModal({ isOpen: true, mode })
+  }
+
   const popularCourses = [
+// ... (rest of the popularCourses array)
     {
       id: 1,
       title: 'Web Development Bootcamp',
@@ -98,10 +110,13 @@ const HomePage = () => {
           </p>
           
           <div className={styles.heroButtons}>
-            <Link to="/register" className={styles.btnPrimary}>
+            <button 
+              onClick={() => openAuthModal('register')} 
+              className={styles.btnPrimary}
+            >
               Start Learning Free →
-            </Link>
-            <Link to="/register" className={styles.btnSecondary}>
+            </button>
+            <Link to="/" className={styles.btnSecondary}>
               Browse Courses
             </Link>
           </div>
@@ -189,9 +204,12 @@ const HomePage = () => {
         </div>
         
         <div className={styles.viewAllBtn}>
-          <Link to="/register" className={styles.btnSecondary}>
+          <button 
+            onClick={() => openAuthModal('register')} 
+            className={styles.btnSecondary}
+          >
             View All Courses →
-          </Link>
+          </button>
         </div>
       </section>
 
@@ -248,11 +266,20 @@ const HomePage = () => {
         <div className={styles.ctaContent}>
           <h2>Ready to Start Learning?</h2>
           <p>Join millions of students and transform your career today!</p>
-          <Link to="/register" className={styles.btnPrimary}>
+          <button 
+            onClick={() => openAuthModal('register')} 
+            className={styles.btnPrimary}
+          >
             Get Started Free →
-          </Link>
+          </button>
         </div>
       </section>
+
+      <AuthModal 
+        isOpen={authModal.isOpen} 
+        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
+        initialMode={authModal.mode}
+      />
 
       <footer className={styles.footer}>
         <div className={styles.footerContent}>

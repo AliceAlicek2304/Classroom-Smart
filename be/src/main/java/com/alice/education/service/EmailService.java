@@ -1,7 +1,5 @@
 package com.alice.education.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,23 +7,29 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
 @Service
 public class EmailService {
-    
+
     @Autowired
     private JavaMailSender mailSender;
-    
+
     @Value("${spring.mail.from}")
     private String fromEmail;
-    
+
     @Value("${app.url}")
     private String appUrl;
-    
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     @Async("taskExecutor")
     public void sendVerificationEmail(String toEmail, String token) throws MessagingException {
         String subject = "Xác thực tài khoản - Education AI";
         String verificationUrl = appUrl + "/api/auth/verify?token=" + token;
-        
+
         String htmlContent = "<html>" +
                 "<body style='font-family: Arial, sans-serif;'>" +
                 "<div style='max-width: 600px; margin: 0 auto; padding: 20px;'>" +
@@ -47,15 +51,15 @@ public class EmailService {
                 "</div>" +
                 "</body>" +
                 "</html>";
-        
+
         sendHtmlEmail(toEmail, subject, htmlContent);
     }
-    
+
     @Async("taskExecutor")
     public void sendPasswordResetEmail(String toEmail, String token) throws MessagingException {
         String subject = "Đặt lại mật khẩu - Education AI";
-        String resetUrl = appUrl + "/api/auth/reset-password?token=" + token;
-        
+        String resetUrl = frontendUrl + "/reset-password?token=" + token;
+
         String htmlContent = "<html>" +
                 "<body style='font-family: Arial, sans-serif;'>" +
                 "<div style='max-width: 600px; margin: 0 auto; padding: 20px;'>" +
@@ -73,23 +77,24 @@ public class EmailService {
                 "<p style='color: #999; font-size: 12px; margin-top: 30px;'>" +
                 "Link này sẽ hết hạn sau 1 giờ.</p>" +
                 "<p style='color: #999; font-size: 12px;'>" +
-                "Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này và mật khẩu của bạn sẽ không thay đổi.</p>" +
+                "Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này và mật khẩu của bạn sẽ không thay đổi.</p>"
+                +
                 "</div>" +
                 "</body>" +
                 "</html>";
-        
+
         sendHtmlEmail(toEmail, subject, htmlContent);
     }
-    
+
     private void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        
+
         helper.setFrom(fromEmail);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true); // true indicates html
-        
+
         mailSender.send(message);
     }
 }

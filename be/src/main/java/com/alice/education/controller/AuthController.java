@@ -31,10 +31,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
-    
+
     @Autowired
     private AuthService authService;
-    
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<MessageResponse>> register(@Valid @RequestBody RegisterRequest request) {
         try {
@@ -50,7 +50,7 @@ public class AuthController {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
-    
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         try {
@@ -64,7 +64,7 @@ public class AuthController {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
-    
+
     @GetMapping("/verify")
     public ResponseEntity<ApiResponse<MessageResponse>> verifyEmail(@RequestParam("token") String token) {
         try {
@@ -78,7 +78,7 @@ public class AuthController {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
-    
+
     @PostMapping("/resend-verification")
     public ResponseEntity<ApiResponse<MessageResponse>> resendVerificationEmail(@RequestParam("email") String email) {
         try {
@@ -94,21 +94,27 @@ public class AuthController {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
-    
+
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse<MessageResponse>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<ApiResponse<MessageResponse>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
         try {
             MessageResponse response = authService.forgotPassword(request);
-            return ApiResponse.success(response.getMessage(), response);
+            if (response.isSuccess()) {
+                return ApiResponse.success(response.getMessage(), response);
+            } else {
+                return ApiResponse.error(response.getMessage());
+            }
         } catch (MessagingException e) {
             return ApiResponse.error("Lỗi khi gửi email. Vui lòng thử lại!");
         } catch (Exception e) {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
-    
+
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
         try {
             MessageResponse response = authService.resetPassword(request);
             if (response.isSuccess()) {
@@ -120,12 +126,12 @@ public class AuthController {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
-    
+
     @GetMapping("/test")
     public ResponseEntity<ApiResponse<String>> test() {
         return ApiResponse.success("API đang hoạt động!", "API is working!");
     }
-    
+
     @PostMapping("/refresh-token")
     public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(@RequestParam("refreshToken") String refreshToken) {
         try {
@@ -139,7 +145,7 @@ public class AuthController {
             return ApiResponse.unauthorized("Refresh token không hợp lệ!");
         }
     }
-    
+
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<AccountResponse>> getCurrentUser() {
         try {
@@ -149,9 +155,10 @@ public class AuthController {
             return ApiResponse.unauthorized("Vui lòng đăng nhập!");
         }
     }
-    
+
     @PutMapping("/change-password")
-    public ResponseEntity<ApiResponse<MessageResponse>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<ApiResponse<MessageResponse>> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request) {
         try {
             MessageResponse response = authService.changePassword(request);
             if (response.isSuccess()) {
@@ -163,7 +170,7 @@ public class AuthController {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
         }
     }
-    
+
     @GetMapping("/students")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<ApiResponse<java.util.List<StudentResponse>>> getAllStudents() {
