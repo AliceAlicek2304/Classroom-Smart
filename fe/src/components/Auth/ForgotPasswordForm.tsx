@@ -4,11 +4,10 @@ import { useToast } from '../Toast'
 import styles from './AuthForm.module.css'
 
 interface ForgotPasswordFormProps {
-  onSuccess?: () => void
   onBackToLogin: () => void
 }
 
-const ForgotPasswordForm = ({ onSuccess, onBackToLogin }: ForgotPasswordFormProps) => {
+const ForgotPasswordForm = ({ onBackToLogin }: ForgotPasswordFormProps) => {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

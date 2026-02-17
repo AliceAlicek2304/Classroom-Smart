@@ -3,9 +3,6 @@ import { ToastProvider } from './components/Toast'
 import { AuthProvider } from './contexts'
 import ProtectedRoute from './components/ProtectedRoute'
 import HomePage from './pages/HomePage/HomePage'
-import LoginPage from './pages/Auth/LoginPage'
-import RegisterPage from './pages/Auth/RegisterPage'
-import ForgotPasswordPage from './pages/Auth/ForgotPasswordPage'
 import ResetPasswordPage from './pages/Auth/ResetPasswordPage'
 import AdminDashboard from './pages/Admin/AdminDashboard'
 import SubjectsPage from './pages/Admin/SubjectsPage'
@@ -22,9 +19,6 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             
             <Route path="/admin" element={

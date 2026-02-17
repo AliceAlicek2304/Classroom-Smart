@@ -30,7 +30,7 @@ api.interceptors.response.use(
       // Token expired, clear storage and redirect to login
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
-      window.location.href = '/login'
+      window.location.href = '/'
     }
     return Promise.reject(error)
   }
