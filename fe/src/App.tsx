@@ -11,6 +11,8 @@ import ClassroomsPage from './pages/Admin/ClassroomsPage'
 import StudentsPage from './pages/Admin/StudentsPage'
 import TeacherDashboard from './pages/Teacher/TeacherDashboard'
 import TeacherClassroomsPage from './pages/Teacher/TeacherClassroomsPage'
+import TeacherAssignmentsPage from './pages/Teacher/TeacherAssignmentsPage'
+import TeacherExamsPage from './pages/Teacher/TeacherExamsPage'
 import CustomerClassroomsPage from './pages/Customer/CustomerClassroomsPage'
 import ProfilePage from './pages/Common/ProfilePage'
 import './App.css'
@@ -60,6 +62,16 @@ function App() {
                 <TeacherClassroomsPage />
               </ProtectedRoute>
             } />
+            <Route path="/teacher/assignments" element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <TeacherAssignmentsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/teacher/exams" element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <TeacherExamsPage />
+              </ProtectedRoute>
+            } />
 
             <Route path="/customer/my-classrooms" element={
               <ProtectedRoute requiredRole="CUSTOMER">
@@ -67,6 +79,16 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/customer/classrooms" element={
+              <ProtectedRoute requiredRole="CUSTOMER">
+                <CustomerClassroomsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/customer/docs" element={
+              <ProtectedRoute requiredRole="CUSTOMER">
+                <CustomerClassroomsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/customer/assignments" element={
               <ProtectedRoute requiredRole="CUSTOMER">
                 <CustomerClassroomsPage />
               </ProtectedRoute>

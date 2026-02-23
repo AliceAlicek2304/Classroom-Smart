@@ -331,6 +331,126 @@
   font-size: 0.9rem;
 }
 
+/* ===== ACCORDION (Chapter list) ===== */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 2px solid var(--dark);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.accordionRow {
+  border-bottom: 2px solid var(--dark);
+}
+.accordionRow:last-child {
+  border-bottom: none;
+}
+
+.accordionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-white);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.accordionHeader:hover {
+  background: #f8f5f0;
+}
+
+.accordionToggle {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  color: #e53e3e;
+  background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.accordionOpen .accordionToggle {
+  background: #e53e3e;
+  color: #fff;
+}
+
+.accordionTitle {
+  flex: 1;
+  font-weight: 700;
+  font-size: 0.97rem;
+  color: var(--dark);
+}
+
+.accordionMeta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray);
+  white-space: nowrap;
+}
+
+.accordionBody {
+  background: #fafaf9;
+  border-top: 2px solid var(--gray-light);
+}
+
+.accordionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1.25rem 0.75rem 3.25rem;
+  border-bottom: 1px solid var(--gray-light);
+  transition: background 0.15s;
+}
+.accordionItem:last-child {
+  border-bottom: none;
+}
+.accordionItem:hover {
+  background: #f5f1eb;
+}
+
+.accordionItemIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.accordionItemTitle {
+  flex: 1;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+.accordionItemTitle a {
+  color: var(--dark);
+  text-decoration: none;
+}
+.accordionItemTitle a:hover {
+  color: var(--purple);
+  text-decoration: underline;
+}
+
+.accordionItemRight {
+  font-size: 0.82rem;
+  color: var(--gray);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.accordionPlaceholder {
+  padding: 0.75rem 1.25rem 0.75rem 3.25rem;
+  font-size: 0.88rem;
+  color: var(--gray);
+  font-style: italic;
+}
+
 /* ===== STATS BADGES ===== */
 .stats {
   display: flex;
