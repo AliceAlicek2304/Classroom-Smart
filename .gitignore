@@ -10,6 +10,11 @@ be/.mvn/
 be/mvnw
 be/mvnw.cmd
 be/HELP.md
+be/src/main/resources/static/img/avatar/*
+!be/src/main/resources/static/img/avatar/.gitkeep
+be/src/main/resources/static/chapter/*
+!be/src/main/resources/static/chapter/.gitkeep
+be/uploads/
 
 # Application Properties (contains sensitive info)
 be/src/main/resources/application.properties

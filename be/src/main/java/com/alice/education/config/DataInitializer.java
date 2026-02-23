@@ -1,5 +1,7 @@
 package com.alice.education.config;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,6 +50,7 @@ public class DataInitializer implements CommandLineRunner {
         admin.setRole(Role.ADMIN);
         admin.setProvider(Provider.LOCAL);
         admin.setIsActive(true);
+        admin.setBirthDay(LocalDate.of(1990, 1, 1));
         accountRepository.save(admin);
         System.out.println("✓ Created ADMIN account - username: admin, password: admin123");
 
@@ -60,6 +63,7 @@ public class DataInitializer implements CommandLineRunner {
         teacher.setRole(Role.TEACHER);
         teacher.setProvider(Provider.LOCAL);
         teacher.setIsActive(true);
+        teacher.setBirthDay(LocalDate.of(1985, 5, 20));
         accountRepository.save(teacher);
         System.out.println("✓ Created TEACHER account - username: teacher, password: teacher123");
 
@@ -72,6 +76,7 @@ public class DataInitializer implements CommandLineRunner {
         customer.setRole(Role.CUSTOMER);
         customer.setProvider(Provider.LOCAL);
         customer.setIsActive(true);
+        customer.setBirthDay(LocalDate.of(2008, 10, 15));
         accountRepository.save(customer);
         System.out.println("✓ Created CUSTOMER account - username: customer, password: customer123");
 

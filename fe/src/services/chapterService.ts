@@ -5,9 +5,8 @@ export interface Chapter {
   title: string
   chapterNumber: number
   description: string
-  pageStart: number
-  pageEnd: number
   isActive: boolean
+  pdfUrl?: string
   textbookId: number
   textbookTitle?: string
   createdBy?: string
@@ -19,10 +18,9 @@ export interface ChapterRequest {
   title: string
   chapterNumber: number
   description: string
-  pageStart: number
-  pageEnd: number
   isActive?: boolean
   textbookId: number
+  pdfFile?: File
 }
 
 export interface ApiResponse<T> {
@@ -54,12 +52,26 @@ const chapterAPI = {
   },
 
   create: async (data: ChapterRequest): Promise<ApiResponse<Chapter>> => {
-    const response = await api.post('/chapters', data)
+    const formData = new FormData()
+    const { pdfFile, ...chapterData } = data
+    formData.append('chapter', new Blob([JSON.stringify(chapterData)], { type: 'application/json' }))
+    if (pdfFile) formData.append('file', pdfFile)
+    
+    const response = await api.post('/chapters', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
     return response.data
   },
 
   update: async (id: number, data: ChapterRequest): Promise<ApiResponse<Chapter>> => {
-    const response = await api.put(`/chapters/${id}`, data)
+    const formData = new FormData()
+    const { pdfFile, ...chapterData } = data
+    formData.append('chapter', new Blob([JSON.stringify(chapterData)], { type: 'application/json' }))
+    if (pdfFile) formData.append('file', pdfFile)
+    
+    const response = await api.put(`/chapters/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
     return response.data
   },
 

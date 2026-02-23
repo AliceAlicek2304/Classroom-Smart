@@ -71,15 +71,21 @@ const StudentsPage = () => {
             <h1 className={styles.title}>Students Management</h1>
             <p className={styles.subtitle}>Quản lý tài khoản học sinh trong hệ thống</p>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <div style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', color: '#fff', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.875rem', fontWeight: 600 }}>
-              Tổng: {students.length}
+          <div className={styles.stats}>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.purple}`}></div>
+              <span className={styles.statLabel}>Tổng:</span>
+              <span className={styles.statValue}>{students.length}</span>
             </div>
-            <div style={{ background: 'linear-gradient(135deg, #48bb78, #38a169)', color: '#fff', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.875rem', fontWeight: 600 }}>
-              Active: {activeCount}
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.green}`}></div>
+              <span className={styles.statLabel}>Active:</span>
+              <span className={styles.statValue}>{activeCount}</span>
             </div>
-            <div style={{ background: 'linear-gradient(135deg, #fc8181, #e53e3e)', color: '#fff', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.875rem', fontWeight: 600 }}>
-              Inactive: {inactiveCount}
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.red}`}></div>
+              <span className={styles.statLabel}>Inactive:</span>
+              <span className={styles.statValue}>{inactiveCount}</span>
             </div>
           </div>
         </div>
@@ -128,16 +134,15 @@ const StudentsPage = () => {
                   <tr key={student.id} style={{ opacity: student.isActive ? 1 : 0.6 }}>
                     <td>#{student.id}</td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-                        <div style={{
-                          width: 36, height: 36, borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: '#fff', fontWeight: 700, fontSize: '0.875rem', flexShrink: 0
-                        }}>
-                          {student.fullName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div className={styles.avatar}>
+                          {student.avatar ? (
+                            <img src={student.avatar.startsWith('http') ? student.avatar : `http://localhost:8080${student.avatar}`} alt={student.fullName} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                          ) : (
+                            student.fullName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'
+                          )}
                         </div>
-                        <strong>{student.fullName}</strong>
+                        <strong style={{ fontSize: '0.95rem' }}>{student.fullName}</strong>
                       </div>
                     </td>
                     <td style={{ color: '#718096' }}>{student.username}</td>

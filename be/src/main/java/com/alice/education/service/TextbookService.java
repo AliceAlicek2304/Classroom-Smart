@@ -1,7 +1,15 @@
 package com.alice.education.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +30,8 @@ public class TextbookService {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    private final String uploadDir = "be/src/main/resources/static/chapter/";
 
     @Transactional
     public TextbookResponse createTextbook(TextbookRequest request) {
@@ -115,5 +125,39 @@ public class TextbookService {
         response.setCreatedAt(textbook.getCreatedAt());
         response.setUpdatedAt(textbook.getUpdatedAt());
         return response;
+    }
+
+    public byte[] downloadAllChapters(Long id) {
+        Textbook textbook = textbookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Textbook not found with id: " + id));
+
+        Set<com.alice.education.model.Chapter> chapters = textbook.getChapters();
+        if (chapters.isEmpty()) {
+            throw new RuntimeException("No chapters found for this textbook");
+        }
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ZipOutputStream zos = new ZipOutputStream(baos)) {
+
+            for (com.alice.education.model.Chapter chapter : chapters) {
+                if (chapter.getPdfUrl() != null && !chapter.getPdfUrl().isEmpty()) {
+                    // pdfUrl is like /chapter/filename.pdf
+                    String fileName = chapter.getPdfUrl().replace("/chapter/", "");
+                    Path filePath = Paths.get(uploadDir).resolve(fileName);
+
+                    if (Files.exists(filePath)) {
+                        ZipEntry zipEntry = new ZipEntry(
+                                "Chương " + chapter.getChapterNumber() + " - " + chapter.getTitle() + ".pdf");
+                        zos.putNextEntry(zipEntry);
+                        Files.copy(filePath, zos);
+                        zos.closeEntry();
+                    }
+                }
+            }
+            zos.finish();
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating zip file: " + e.getMessage());
+        }
     }
 }

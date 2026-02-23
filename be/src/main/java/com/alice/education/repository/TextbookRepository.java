@@ -9,12 +9,14 @@ import com.alice.education.model.Textbook;
 
 @Repository
 public interface TextbookRepository extends JpaRepository<Textbook, Long> {
-    
+
     List<Textbook> findBySubjectId(Long subjectId);
-    
+
     List<Textbook> findByIsActiveTrue();
-    
+
     List<Textbook> findBySubjectIdAndIsActiveTrue(Long subjectId);
-    
+
     List<Textbook> findByTitleContainingIgnoreCase(String keyword);
+
+    List<Textbook> findTop5ByOrderByCreatedAtDesc();
 }

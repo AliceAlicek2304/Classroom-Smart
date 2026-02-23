@@ -64,8 +64,8 @@ const Header = () => {
                 className={styles.avatarButton}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt={user.fullName} className={styles.avatar} />
+                {user.avatar ? (
+                  <img src={user.avatar.startsWith('http') ? user.avatar : `http://localhost:8080${user.avatar}`} alt={user.fullName} className={styles.avatar} />
                 ) : (
                   <div className={styles.avatarPlaceholder}>
                     {getInitials(user.fullName)}
@@ -77,8 +77,8 @@ const Header = () => {
                 <div className={styles.dropdown}>
                   <div className={styles.dropdownHeader}>
                     <div className={styles.dropdownAvatar}>
-                      {user.avatarUrl ? (
-                        <img src={user.avatarUrl} alt={user.fullName} />
+                      {user.avatar ? (
+                        <img src={user.avatar.startsWith('http') ? user.avatar : `http://localhost:8080${user.avatar}`} alt={user.fullName} />
                       ) : (
                         <span>{getInitials(user.fullName)}</span>
                       )}

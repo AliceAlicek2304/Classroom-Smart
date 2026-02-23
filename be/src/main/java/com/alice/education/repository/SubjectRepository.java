@@ -10,10 +10,12 @@ import com.alice.education.model.Subject;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
-    
+
     Optional<Subject> findByName(String name);
-    
+
     List<Subject> findByIsActiveTrue();
-    
+
     List<Subject> findByNameContainingIgnoreCase(String keyword);
+
+    List<Subject> findTop5ByOrderByCreatedAtDesc();
 }

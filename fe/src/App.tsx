@@ -11,6 +11,7 @@ import ClassroomsPage from './pages/Admin/ClassroomsPage'
 import StudentsPage from './pages/Admin/StudentsPage'
 import TeacherDashboard from './pages/Teacher/TeacherDashboard'
 import TeacherClassroomsPage from './pages/Teacher/TeacherClassroomsPage'
+import ProfilePage from './pages/Common/ProfilePage'
 import './App.css'
 
 function App() {
@@ -56,6 +57,12 @@ function App() {
             <Route path="/teacher/classrooms" element={
               <ProtectedRoute requiredRole="TEACHER">
                 <TeacherClassroomsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             } />
           </Routes>

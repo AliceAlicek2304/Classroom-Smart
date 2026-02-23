@@ -12,7 +12,8 @@ const RegisterForm = ({ onSuccess, onToggleLogin }: RegisterFormProps) => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    birthDay: ''
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -112,6 +113,19 @@ const RegisterForm = ({ onSuccess, onToggleLogin }: RegisterFormProps) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="nhập email của bạn"
+            required
+            className={styles.input}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="birthDay">Ngày sinh</label>
+          <input
+            type="date"
+            id="birthDay"
+            name="birthDay"
+            value={formData.birthDay}
+            onChange={handleChange}
             required
             className={styles.input}
           />

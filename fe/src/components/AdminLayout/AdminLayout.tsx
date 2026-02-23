@@ -91,7 +91,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className={styles.sidebarFooter}>
           <div className={styles.userInfo}>
             <div className={styles.userAvatar}>
-              {getInitials(user?.fullName)}
+              {user?.avatar ? (
+                <img src={user.avatar.startsWith('http') ? user.avatar : `http://localhost:8080${user.avatar}`} alt={user.fullName} className={styles.avatarImg} />
+              ) : (
+                getInitials(user?.fullName)
+              )}
             </div>
             <div className={styles.userName}>
               <h4>{user?.fullName}</h4>

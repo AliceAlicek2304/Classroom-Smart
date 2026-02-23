@@ -129,6 +129,18 @@ const SubjectsPage = () => {
             <h1 className={styles.title}>Subjects Management</h1>
             <p className={styles.subtitle}>Quản lý các môn học trong hệ thống</p>
           </div>
+          <div className={styles.stats}>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.purple}`}></div>
+              <span className={styles.statLabel}>Môn học:</span>
+              <span className={styles.statValue}>{subjects.length}</span>
+            </div>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.green}`}></div>
+              <span className={styles.statLabel}>Active:</span>
+              <span className={styles.statValue}>{subjects.filter(s => s.isActive).length}</span>
+            </div>
+          </div>
           <button className={styles.btnCreate} onClick={handleCreate}>
             <span>➕</span> Thêm môn học
           </button>

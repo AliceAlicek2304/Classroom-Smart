@@ -1,5 +1,11 @@
 package com.alice.education.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alice.education.dto.AccountResponse;
 import com.alice.education.dto.AuthResponse;
@@ -18,6 +26,7 @@ import com.alice.education.dto.ChangePasswordRequest;
 import com.alice.education.dto.ForgotPasswordRequest;
 import com.alice.education.dto.LoginRequest;
 import com.alice.education.dto.MessageResponse;
+import com.alice.education.dto.ProfileUpdateRequest;
 import com.alice.education.dto.RegisterRequest;
 import com.alice.education.dto.ResetPasswordRequest;
 import com.alice.education.dto.StudentResponse;
@@ -35,6 +44,8 @@ import jakarta.mail.MessagingException;
 
 @Service
 public class AuthService {
+
+    private final String avatarUploadDir = "src/main/resources/static/img/avatar/";
 
     @Autowired
     private AccountRepository accountRepository;
@@ -75,6 +86,7 @@ public class AuthService {
         account.setUsername(request.getUsername());
         account.setEmail(request.getEmail());
         account.setPassword(passwordEncoder.encode(request.getPassword()));
+        account.setBirthDay(request.getBirthDay());
         account.setRole(Role.CUSTOMER);
         account.setProvider(Provider.LOCAL);
         account.setIsActive(false); // Require email verification
@@ -290,6 +302,59 @@ public class AuthService {
         return new MessageResponse("Đổi mật khẩu thành công!", true);
     }
 
+    @Transactional
+    public AccountResponse updateProfile(ProfileUpdateRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
+
+        // Check if email is being changed and if it already exists
+        if (!account.getEmail().equals(request.getEmail()) && accountRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email đã được sử dụng bởi một tài khoản khác!");
+        }
+
+        account.setFullName(request.getFullName());
+        account.setBirthDay(request.getBirthDay());
+        account.setEmail(request.getEmail());
+
+        accountRepository.save(account);
+
+        return convertToAccountResponse(account);
+    }
+
+    @Transactional
+    public String updateAvatar(MultipartFile file) {
+        Account account = getCurrentAccount()
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        try {
+            Path path = Paths.get(avatarUploadDir);
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+
+            String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+            String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
+            Path targetLocation = path.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            String avatarUrl = "/img/avatar/" + fileName;
+            account.setAvatar(avatarUrl);
+            accountRepository.save(account);
+
+            return avatarUrl;
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not store file. Please try again!", ex);
+        }
+    }
+
+    private Optional<Account> getCurrentAccount() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return accountRepository.findByUsername(username);
+    }
+
     private AccountResponse convertToAccountResponse(Account account) {
         AccountResponse response = new AccountResponse();
         response.setId(account.getId());
@@ -320,6 +385,7 @@ public class AuthService {
                 account.getFullName(),
                 account.getEmail(),
                 account.getBirthDay(),
+                account.getAvatar(),
                 account.getIsActive());
     }
 }

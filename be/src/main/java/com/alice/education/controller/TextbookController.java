@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/textbooks")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class TextbookController {
-    
+
     @Autowired
     private TextbookService textbookService;
-    
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TextbookResponse>> createTextbook(@Valid @RequestBody TextbookRequest request) {
@@ -41,7 +41,7 @@ public class TextbookController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<TextbookResponse>> getTextbookById(@PathVariable Long id) {
@@ -52,7 +52,7 @@ public class TextbookController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<TextbookResponse>>> getAllTextbooks() {
@@ -63,7 +63,7 @@ public class TextbookController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/subject/{subjectId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<TextbookResponse>>> getTextbooksBySubject(@PathVariable Long subjectId) {
@@ -74,7 +74,7 @@ public class TextbookController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/active")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<TextbookResponse>>> getActiveTextbooks() {
@@ -85,7 +85,7 @@ public class TextbookController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<TextbookResponse>>> searchTextbooks(@RequestParam String keyword) {
@@ -96,11 +96,11 @@ public class TextbookController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TextbookResponse>> updateTextbook(
-            @PathVariable Long id, 
+            @PathVariable Long id,
             @Valid @RequestBody TextbookRequest request) {
         try {
             TextbookResponse response = textbookService.updateTextbook(id, request);
@@ -109,7 +109,7 @@ public class TextbookController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteTextbook(@PathVariable Long id) {
@@ -118,6 +118,23 @@ public class TextbookController {
             return ApiResponse.success("Textbook deleted successfully", null);
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/download")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
+    public ResponseEntity<byte[]> downloadAllChapters(@PathVariable Long id) {
+        try {
+            byte[] zipData = textbookService.downloadAllChapters(id);
+            TextbookResponse textbook = textbookService.getTextbookById(id);
+            String fileName = "Textbook_" + textbook.getTitle().replaceAll("[^a-zA-Z0-9]", "_") + ".zip";
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+                    .header("Content-Type", "application/zip")
+                    .body(zipData);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

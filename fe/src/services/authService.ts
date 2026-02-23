@@ -10,6 +10,13 @@ export interface RegisterRequest {
   username: string
   email: string
   password: string
+  birthDay?: string
+}
+
+export interface ProfileUpdateRequest {
+  fullName: string
+  birthDay: string
+  email: string
 }
 
 export interface AuthResponse {
@@ -78,6 +85,24 @@ export const authAPI = {
   // Refresh token
   refreshToken: async (refreshToken: string): Promise<ApiResponse<AuthResponse>> => {
     const response = await api.post('/auth/refresh-token', { refreshToken })
+    return response.data
+  },
+
+  // Update profile
+  updateProfile: async (data: ProfileUpdateRequest): Promise<ApiResponse<any>> => {
+    const response = await api.put('/auth/profile', data)
+    return response.data
+  },
+  
+  // Upload avatar
+  uploadAvatar: async (file: File): Promise<ApiResponse<string>> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await api.post('/auth/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response.data
   }
 }

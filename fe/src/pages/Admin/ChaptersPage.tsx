@@ -4,6 +4,7 @@ import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import chapterAPI, { type Chapter, type ChapterRequest } from '../../services/chapterService'
 import textbookAPI, { type Textbook } from '../../services/textbookService'
+import { SERVER_URL } from '../../services/api'
 import styles from './Admin.module.css'
 
 const ChaptersPage = () => {
@@ -19,10 +20,9 @@ const ChaptersPage = () => {
     title: '',
     chapterNumber: 1,
     description: '',
-    pageStart: 1,
-    pageEnd: 1,
     isActive: true,
-    textbookId: 0
+    textbookId: 0,
+    pdfFile: undefined
   })
 
   useEffect(() => {
@@ -61,10 +61,9 @@ const ChaptersPage = () => {
       title: '',
       chapterNumber: 1,
       description: '',
-      pageStart: 1,
-      pageEnd: 1,
       isActive: true,
-      textbookId: textbooks[0]?.id || 0
+      textbookId: textbooks[0]?.id || 0,
+      pdfFile: undefined
     })
     setShowModal(true)
   }
@@ -75,10 +74,9 @@ const ChaptersPage = () => {
       title: chapter.title,
       chapterNumber: chapter.chapterNumber,
       description: chapter.description,
-      pageStart: chapter.pageStart,
-      pageEnd: chapter.pageEnd,
       isActive: chapter.isActive,
-      textbookId: chapter.textbookId
+      textbookId: chapter.textbookId,
+      pdfFile: undefined
     })
     setShowModal(true)
   }
@@ -157,7 +155,7 @@ const ChaptersPage = () => {
                   <th>Số chương</th>
                   <th>Tên chương</th>
                   <th>Sách giáo khoa</th>
-                  <th>Trang</th>
+                  <th>Nội dung</th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
@@ -169,7 +167,15 @@ const ChaptersPage = () => {
                     <td><strong>Chương {chapter.chapterNumber}</strong></td>
                     <td>{chapter.title}</td>
                     <td>{chapter.textbookTitle}</td>
-                    <td>{chapter.pageStart} - {chapter.pageEnd}</td>
+                    <td>
+                      {chapter.pdfUrl ? (
+                        <a href={`${SERVER_URL}${chapter.pdfUrl}`} target="_blank" rel="noopener noreferrer" className={styles.linkView}>
+                          📄 Xem chương
+                        </a>
+                      ) : (
+                        <span className={styles.noFile}>Chưa có file</span>
+                      )}
+                    </td>
                     <td>
                       <span className={`${styles.badge} ${chapter.isActive ? styles.active : styles.inactive}`}>
                         {chapter.isActive ? 'Active' : 'Inactive'}
@@ -237,24 +243,15 @@ const ChaptersPage = () => {
                       />
                     </div>
                     <div className={styles.formGroup}>
-                      <label>Trang bắt đầu *</label>
+                      <label>Nội dung (PDF) *</label>
                       <input
-                        type="number"
-                        required
-                        min="1"
-                        value={formData.pageStart}
-                        onChange={(e) => setFormData({ ...formData, pageStart: parseInt(e.target.value) })}
+                        type="file"
+                        accept=".pdf"
+                        onChange={(e) => setFormData({ ...formData, pdfFile: e.target.files?.[0] })}
                       />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Trang kết thúc *</label>
-                      <input
-                        type="number"
-                        required
-                        min="1"
-                        value={formData.pageEnd}
-                        onChange={(e) => setFormData({ ...formData, pageEnd: parseInt(e.target.value) })}
-                      />
+                      {editingChapter?.pdfUrl && !formData.pdfFile && (
+                        <small className={styles.helpText}>Hiện tại: {editingChapter.pdfUrl.split('_').pop()}</small>
+                      )}
                     </div>
                     <div className={styles.formGroup}>
                       <label>Mô tả</label>

@@ -152,6 +152,18 @@ const ClassroomsPage = () => {
             <h1 className={styles.title}>Classrooms Management</h1>
             <p className={styles.subtitle}>Quản lý tất cả các lớp học trong hệ thống</p>
           </div>
+          <div className={styles.stats}>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.purple}`}></div>
+              <span className={styles.statLabel}>Lớp học:</span>
+              <span className={styles.statValue}>{classrooms.length}</span>
+            </div>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.green}`}></div>
+              <span className={styles.statLabel}>Active:</span>
+              <span className={styles.statValue}>{classrooms.filter(c => c.isActive).length}</span>
+            </div>
+          </div>
           <button className={styles.btnCreate} onClick={handleCreate}>
             <span>➕</span> Tạo lớp học
           </button>

@@ -4,6 +4,7 @@ import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import textbookAPI, { type Textbook, type TextbookRequest } from '../../services/textbookService'
 import chapterAPI, { type Chapter, type ChapterRequest } from '../../services/chapterService'
+import { SERVER_URL } from '../../services/api'
 import subjectAPI, { type Subject } from '../../services/subjectService'
 import styles from './Admin.module.css'
 import tbStyles from './TextbooksPage.module.css'
@@ -37,7 +38,7 @@ const TextbooksPage = () => {
 
   const [chapterFormData, setChapterFormData] = useState<ChapterRequest>({
     title: '', chapterNumber: 1, description: '',
-    pageStart: 1, pageEnd: 1, isActive: true, textbookId: 0
+    isActive: true, textbookId: 0, pdfFile: undefined
   })
 
   useEffect(() => {
@@ -165,7 +166,7 @@ const TextbooksPage = () => {
     const existing = chaptersByTextbook[textbookId] || []
     setChapterFormData({
       title: '', chapterNumber: existing.length + 1, description: '',
-      pageStart: 1, pageEnd: 1, isActive: true, textbookId
+      isActive: true, textbookId, pdfFile: undefined
     })
     setShowChapterModal(true)
   }
@@ -175,8 +176,8 @@ const TextbooksPage = () => {
     setChapterModalTextbookId(chapter.textbookId)
     setChapterFormData({
       title: chapter.title, chapterNumber: chapter.chapterNumber,
-      description: chapter.description, pageStart: chapter.pageStart,
-      pageEnd: chapter.pageEnd, isActive: chapter.isActive, textbookId: chapter.textbookId
+      description: chapter.description, isActive: chapter.isActive, 
+      textbookId: chapter.textbookId, pdfFile: undefined
     })
     setShowChapterModal(true)
   }
@@ -221,6 +222,23 @@ const TextbooksPage = () => {
     }
   }
 
+  const handleDownloadAll = async (textbook: Textbook) => {
+    try {
+      const blob = await textbookAPI.downloadFull(textbook.id);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Textbook_${textbook.title.replace(/\s+/g, '_')}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success('Đang bắt đầu tải về trọn bộ chương...');
+    } catch (error) {
+      toast.error('Không thể tải về. Vui lòng thử lại sau.');
+    }
+  }
+
   return (
     <AdminLayout>
       <div className={styles.page}>
@@ -229,6 +247,18 @@ const TextbooksPage = () => {
           <div>
             <h1 className={styles.title}>Textbooks Management</h1>
             <p className={styles.subtitle}>Quản lý sách giáo khoa và các chương bên trong</p>
+          </div>
+          <div className={styles.stats}>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.purple}`}></div>
+              <span className={styles.statLabel}>Sách:</span>
+              <span className={styles.statValue}>{textbooks.length}</span>
+            </div>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.green}`}></div>
+              <span className={styles.statLabel}>Active:</span>
+              <span className={styles.statValue}>{textbooks.filter(t => t.isActive).length}</span>
+            </div>
           </div>
           <button className={styles.btnCreate} onClick={handleCreateTextbook}>
             <span>➕</span> Thêm sách
@@ -289,6 +319,13 @@ const TextbooksPage = () => {
                       </span>
                       <button className={styles.btnEdit} onClick={() => handleEditTextbook(textbook)}>✏️ Sửa</button>
                       <button className={styles.btnDelete} onClick={() => handleDeleteTextbook(textbook.id)}>🗑️ Xóa</button>
+                      <button 
+                        className={styles.btnDownload} 
+                        onClick={() => handleDownloadAll(textbook)}
+                        title="Tải toàn bộ các chương trong sách"
+                      >
+                        📥 Tải toàn bộ
+                      </button>
                     </div>
                   </div>
 
@@ -320,7 +357,7 @@ const TextbooksPage = () => {
                               <tr>
                                 <th>Chương</th>
                                 <th>Tên chương</th>
-                                <th>Trang</th>
+                                <th>Nội dung</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                               </tr>
@@ -332,7 +369,15 @@ const TextbooksPage = () => {
                                   <tr key={ch.id}>
                                     <td><strong>Ch. {ch.chapterNumber}</strong></td>
                                     <td>{ch.title}</td>
-                                    <td>{ch.pageStart} – {ch.pageEnd}</td>
+                                    <td>
+                                      {ch.pdfUrl ? (
+                                        <a href={`${SERVER_URL}${ch.pdfUrl}`} target="_blank" rel="noopener noreferrer" className={styles.linkView}>
+                                          📄 Xem chương
+                                        </a>
+                                      ) : (
+                                        <span className={styles.noFile}>Chưa có file</span>
+                                      )}
+                                    </td>
                                     <td>
                                       <span className={`${styles.badge} ${ch.isActive ? styles.active : styles.inactive}`}>
                                         {ch.isActive ? 'Active' : 'Inactive'}
@@ -457,19 +502,13 @@ const TextbooksPage = () => {
                         placeholder="VD: Hàm số bậc nhất" />
                     </div>
                   </div>
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>Trang bắt đầu *</label>
-                      <input type="number" required min="1"
-                        value={chapterFormData.pageStart}
-                        onChange={(e) => setChapterFormData({ ...chapterFormData, pageStart: parseInt(e.target.value) })} />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Trang kết thúc *</label>
-                      <input type="number" required min="1"
-                        value={chapterFormData.pageEnd}
-                        onChange={(e) => setChapterFormData({ ...chapterFormData, pageEnd: parseInt(e.target.value) })} />
-                    </div>
+                  <div className={styles.formGroup}>
+                    <label>Nội dung (PDF) *</label>
+                    <input type="file" accept=".pdf"
+                      onChange={(e) => setChapterFormData({ ...chapterFormData, pdfFile: e.target.files?.[0] })} />
+                    {editingChapter?.pdfUrl && !chapterFormData.pdfFile && (
+                      <small className={styles.helpText}>Hiện tại: {editingChapter.pdfUrl.split('_').pop()}</small>
+                    )}
                   </div>
                   <div className={styles.formGroup}>
                     <label>Mô tả</label>

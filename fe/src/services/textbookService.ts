@@ -71,6 +71,11 @@ const textbookAPI = {
   delete: async (id: number): Promise<ApiResponse<void>> => {
     const response = await api.delete(`/textbooks/${id}`)
     return response.data
+  },
+  
+  downloadFull: async (id: number): Promise<Blob> => {
+    const response = await api.get(`/textbooks/${id}/download`, { responseType: 'blob' })
+    return response.data
   }
 }
 

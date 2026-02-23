@@ -33,7 +33,7 @@ public class AccountController {
             List<Account> teachers = accountRepository.findByRole(Role.TEACHER);
             List<StudentResponse> responses = teachers.stream()
                     .map(a -> new StudentResponse(a.getId(), a.getUsername(), a.getFullName(), a.getEmail(),
-                            a.getBirthDay(), a.getIsActive()))
+                            a.getBirthDay(), a.getAvatar(), a.getIsActive()))
                     .toList();
             return ApiResponse.success("Lấy danh sách giáo viên thành công!", responses);
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class AccountController {
             List<Account> students = accountRepository.findByRole(Role.CUSTOMER);
             List<StudentResponse> responses = students.stream()
                     .map(a -> new StudentResponse(a.getId(), a.getUsername(), a.getFullName(), a.getEmail(),
-                            a.getBirthDay(), a.getIsActive()))
+                            a.getBirthDay(), a.getAvatar(), a.getIsActive()))
                     .toList();
             return ApiResponse.success("Lấy danh sách học sinh thành công!", responses);
         } catch (Exception e) {
@@ -66,7 +66,7 @@ public class AccountController {
             accountRepository.save(account);
             StudentResponse response = new StudentResponse(
                     account.getId(), account.getUsername(), account.getFullName(),
-                    account.getEmail(), account.getBirthDay(), account.getIsActive());
+                    account.getEmail(), account.getBirthDay(), account.getAvatar(), account.getIsActive());
             String msg = account.getIsActive() ? "Kích hoạt tài khoản thành công!"
                     : "Vô hiệu hóa tài khoản thành công!";
             return ApiResponse.success(msg, response);

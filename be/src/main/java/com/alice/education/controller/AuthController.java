@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alice.education.dto.AccountResponse;
 import com.alice.education.dto.ApiResponse;
@@ -19,6 +20,7 @@ import com.alice.education.dto.ChangePasswordRequest;
 import com.alice.education.dto.ForgotPasswordRequest;
 import com.alice.education.dto.LoginRequest;
 import com.alice.education.dto.MessageResponse;
+import com.alice.education.dto.ProfileUpdateRequest;
 import com.alice.education.dto.RegisterRequest;
 import com.alice.education.dto.ResetPasswordRequest;
 import com.alice.education.dto.StudentResponse;
@@ -179,6 +181,27 @@ public class AuthController {
             return ApiResponse.success("Lấy danh sách học sinh thành công!", students);
         } catch (Exception e) {
             return ApiResponse.error("Đã xảy ra lỗi: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<AccountResponse>> updateProfile(
+            @Valid @RequestBody ProfileUpdateRequest request) {
+        try {
+            AccountResponse response = authService.updateProfile(request);
+            return ApiResponse.success("Cập nhật thông tin cá nhân thành công!", response);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<ApiResponse<String>> updateAvatar(@RequestParam("file") MultipartFile file) {
+        try {
+            String avatarUrl = authService.updateAvatar(file);
+            return ApiResponse.success("Cập nhật ảnh đại diện thành công!", avatarUrl);
+        } catch (Exception e) {
+            return ApiResponse.error("Lỗi khi tải lên ảnh đại diện: " + e.getMessage());
         }
     }
 }

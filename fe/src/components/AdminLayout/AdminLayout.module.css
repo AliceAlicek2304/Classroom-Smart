@@ -131,6 +131,13 @@
   font-size: 0.85rem;
   color: var(--dark);
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .userName { flex: 1; min-width: 0; }

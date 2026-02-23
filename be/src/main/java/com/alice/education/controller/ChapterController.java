@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alice.education.dto.ApiResponse;
 import com.alice.education.dto.ChapterRequest;
@@ -26,21 +27,23 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/chapters")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ChapterController {
-    
+
     @Autowired
     private ChapterService chapterService;
-    
-    @PostMapping
+
+    @PostMapping(consumes = { "multipart/form-data" })
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ChapterResponse>> createChapter(@Valid @RequestBody ChapterRequest request) {
+    public ResponseEntity<ApiResponse<ChapterResponse>> createChapter(
+            @Valid @RequestPart("chapter") ChapterRequest request,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            ChapterResponse response = chapterService.createChapter(request);
+            ChapterResponse response = chapterService.createChapter(request, file);
             return ApiResponse.success("Chapter created successfully", response);
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<ChapterResponse>> getChapterById(@PathVariable Long id) {
@@ -51,7 +54,7 @@ public class ChapterController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<ChapterResponse>>> getAllChapters() {
@@ -62,7 +65,7 @@ public class ChapterController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/textbook/{textbookId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<ChapterResponse>>> getChaptersByTextbook(@PathVariable Long textbookId) {
@@ -73,7 +76,7 @@ public class ChapterController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/active")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<ChapterResponse>>> getActiveChapters() {
@@ -84,20 +87,21 @@ public class ChapterController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
-    @PutMapping("/{id}")
+
+    @PutMapping(value = "/{id}", consumes = { "multipart/form-data" })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ChapterResponse>> updateChapter(
-            @PathVariable Long id, 
-            @Valid @RequestBody ChapterRequest request) {
+            @PathVariable Long id,
+            @Valid @RequestPart("chapter") ChapterRequest request,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            ChapterResponse response = chapterService.updateChapter(id, request);
+            ChapterResponse response = chapterService.updateChapter(id, request, file);
             return ApiResponse.success("Chapter updated successfully", response);
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteChapter(@PathVariable Long id) {

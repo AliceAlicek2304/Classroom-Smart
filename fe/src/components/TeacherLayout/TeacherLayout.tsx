@@ -55,8 +55,8 @@ const TeacherLayout = ({ children }: TeacherLayoutProps) => {
         <div className={styles.sidebarFooter}>
           <div className={styles.userInfo}>
             <div className={styles.userAvatar}>
-              {user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt={user.fullName} />
+              {user?.avatar ? (
+                <img src={user.avatar.startsWith('http') ? user.avatar : `http://localhost:8080${user.avatar}`} alt={user.fullName} />
               ) : (
                 <span>{getInitials(user?.fullName)}</span>
               )}

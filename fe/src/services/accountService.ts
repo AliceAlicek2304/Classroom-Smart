@@ -11,6 +11,7 @@ export interface Teacher {
   username: string
   fullName: string
   email: string
+  avatar?: string
   isActive: boolean
 }
 
@@ -20,6 +21,7 @@ export interface Student {
   fullName: string
   email: string
   birthDay: string | null
+  avatar?: string
   isActive: boolean
 }
 
