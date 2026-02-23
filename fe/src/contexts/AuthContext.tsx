@@ -69,8 +69,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (response.success) {
         setUser(response.data)
       }
-    } catch (error) {
-      console.error('Failed to fetch user:', error)
+    } catch {
+      // silently ignore - token may be expired
     }
   }
 

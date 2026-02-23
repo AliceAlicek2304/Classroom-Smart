@@ -19,8 +19,8 @@ const TeacherDashboard = () => {
       setLoading(true)
       const response = await classroomAPI.getMyClassrooms()
       setClassrooms(response.data.data || [])
-    } catch (error) {
-      console.error('Lỗi khi tải lớp học:', error)
+    } catch {
+      // failed silently
     } finally {
       setLoading(false)
     }

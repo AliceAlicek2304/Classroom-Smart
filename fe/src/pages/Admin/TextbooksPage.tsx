@@ -63,7 +63,7 @@ const TextbooksPage = () => {
       const response = await subjectAPI.getAll()
       if (response.success) setSubjects(response.data)
     } catch {
-      console.error('Failed to load subjects')
+      // subjects unavailable
     }
   }
 

@@ -21,6 +21,8 @@ public class ClassroomRequest {
     
     @NotNull(message = "Subject ID is required")
     private Long subjectId;
+
+    private String password;
     
     public ClassroomRequest() {
     }
@@ -72,5 +74,13 @@ public class ClassroomRequest {
     
     public void setSubjectId(Long subjectId) {
         this.subjectId = subjectId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

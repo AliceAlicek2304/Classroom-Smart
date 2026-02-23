@@ -15,6 +15,7 @@ public class ClassroomResponse {
     private Long subjectId;
     private String subjectName;
     private Integer studentCount;
+    private String meetUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -108,7 +109,15 @@ public class ClassroomResponse {
     public void setStudentCount(Integer studentCount) {
         this.studentCount = studentCount;
     }
-    
+
+    public String getMeetUrl() {
+        return meetUrl;
+    }
+
+    public void setMeetUrl(String meetUrl) {
+        this.meetUrl = meetUrl;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

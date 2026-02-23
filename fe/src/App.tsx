@@ -11,6 +11,7 @@ import ClassroomsPage from './pages/Admin/ClassroomsPage'
 import StudentsPage from './pages/Admin/StudentsPage'
 import TeacherDashboard from './pages/Teacher/TeacherDashboard'
 import TeacherClassroomsPage from './pages/Teacher/TeacherClassroomsPage'
+import CustomerClassroomsPage from './pages/Customer/CustomerClassroomsPage'
 import ProfilePage from './pages/Common/ProfilePage'
 import './App.css'
 
@@ -57,6 +58,17 @@ function App() {
             <Route path="/teacher/classrooms" element={
               <ProtectedRoute requiredRole="TEACHER">
                 <TeacherClassroomsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/customer/my-classrooms" element={
+              <ProtectedRoute requiredRole="CUSTOMER">
+                <CustomerClassroomsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/customer/classrooms" element={
+              <ProtectedRoute requiredRole="CUSTOMER">
+                <CustomerClassroomsPage />
               </ProtectedRoute>
             } />
 

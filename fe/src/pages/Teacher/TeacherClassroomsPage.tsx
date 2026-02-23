@@ -16,6 +16,10 @@ const TeacherClassroomsPage = () => {
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null)
   const [editingClassroom, setEditingClassroom] = useState<Classroom | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [filterSubject, setFilterSubject] = useState('')
+  const [filterGrade, setFilterGrade] = useState('')
+  const [filterStatus, setFilterStatus] = useState('active')
+  const [filterSchoolYear, setFilterSchoolYear] = useState('')
   const toast = useToast()
   const { confirm, ConfirmDialog } = useConfirm()
 
@@ -25,7 +29,8 @@ const TeacherClassroomsPage = () => {
     gradeLevel: '6',
     schoolYear: `${currentYear}-${currentYear + 1}`,
     description: '',
-    subjectId: 0
+    subjectId: 0,
+    password: ''
   })
 
   useEffect(() => {
@@ -71,7 +76,8 @@ const TeacherClassroomsPage = () => {
       gradeLevel: '6',
       schoolYear: `${currentYear}-${currentYear + 1}`,
       description: '',
-      subjectId: subjects[0]?.id || 0
+      subjectId: subjects[0]?.id || 0,
+      password: ''
     })
     setShowModal(true)
   }
@@ -83,7 +89,8 @@ const TeacherClassroomsPage = () => {
       gradeLevel: classroom.gradeLevel,
       schoolYear: classroom.schoolYear,
       description: classroom.description,
-      subjectId: classroom.subjectId
+      subjectId: classroom.subjectId,
+      password: ''
     })
     setShowModal(true)
   }
@@ -136,10 +143,20 @@ const TeacherClassroomsPage = () => {
     setShowStudentsModal(true)
   }
 
-  const filteredClassrooms = classrooms.filter(classroom =>
-    classroom.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    classroom.subjectName.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredClassrooms = classrooms.filter(classroom => {
+    const matchSearch = !searchTerm.trim() ||
+      classroom.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      classroom.subjectName.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchSubject = !filterSubject || classroom.subjectName === filterSubject
+    const matchGrade = !filterGrade || String(classroom.gradeLevel) === filterGrade
+    const matchStatus = filterStatus === '' ||
+      (filterStatus === 'active' && classroom.isActive) ||
+      (filterStatus === 'inactive' && !classroom.isActive)
+    const matchYear = !filterSchoolYear || classroom.schoolYear === filterSchoolYear
+    return matchSearch && matchSubject && matchGrade && matchStatus && matchYear
+  })
+
+  const uniqueSchoolYears = [...new Set(classrooms.map(c => c.schoolYear))].filter(Boolean).sort()
 
   return (
     <TeacherLayout>
@@ -165,6 +182,54 @@ const TeacherClassroomsPage = () => {
         <button onClick={handleSearch}>🔍 Tìm kiếm</button>
       </div>
 
+      <div className={styles.filterBar}>
+        <select
+          value={filterSubject}
+          onChange={(e) => setFilterSubject(e.target.value)}
+          className={styles.filterSelect}
+        >
+          <option value="">Tất cả môn</option>
+          {subjects.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+        </select>
+
+        <select
+          value={filterGrade}
+          onChange={(e) => setFilterGrade(e.target.value)}
+          className={styles.filterSelect}
+        >
+          <option value="">Tất cả khối</option>
+          {['6','7','8','9'].map(g => <option key={g} value={g}>Khối {g}</option>)}
+        </select>
+
+        <select
+          value={filterSchoolYear}
+          onChange={(e) => setFilterSchoolYear(e.target.value)}
+          className={styles.filterSelect}
+        >
+          <option value="">Tất cả năm</option>
+          {uniqueSchoolYears.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
+
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className={styles.filterSelect}
+        >
+          <option value="active">Hoạt động</option>
+          <option value="inactive">Không hoạt động</option>
+          <option value="">Tất cả trạng thái</option>
+        </select>
+
+        {(filterSubject || filterGrade || filterSchoolYear || filterStatus !== 'active') && (
+          <button
+            onClick={() => { setFilterSubject(''); setFilterGrade(''); setFilterSchoolYear(''); setFilterStatus('active'); setSearchTerm('') }}
+            className={styles.btnReset}
+          >
+            ✕ Xóa bộ lọc
+          </button>
+        )}
+      </div>
+
       {loading ? (
         <div className={styles.loading}>Đang tải...</div>
       ) : (
@@ -177,6 +242,7 @@ const TeacherClassroomsPage = () => {
                 <th>Khối</th>
                 <th>Năm học</th>
                 <th>Học sinh</th>
+                <th>Meet</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
               </tr>
@@ -184,7 +250,7 @@ const TeacherClassroomsPage = () => {
             <tbody>
               {filteredClassrooms.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>
                     Không tìm thấy lớp học nào
                   </td>
                 </tr>
@@ -196,6 +262,13 @@ const TeacherClassroomsPage = () => {
                     <td>{classroom.gradeLevel}</td>
                     <td>{classroom.schoolYear}</td>
                     <td>{classroom.studentCount || 0}</td>
+                    <td>
+                      {classroom.meetUrl ? (
+                        <a href={classroom.meetUrl} target="_blank" rel="noopener noreferrer" className={styles.btnMeet}>
+                          🎥 Tham gia
+                        </a>
+                      ) : <span className={styles.cellMuted}>—</span>}
+                    </td>
                     <td>
                       <span className={classroom.isActive ? styles.badgeActive : styles.badgeInactive}>
                         {classroom.isActive ? 'Hoạt động' : 'Không hoạt động'}
@@ -295,6 +368,17 @@ const TeacherClassroomsPage = () => {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Mô tả về lớp học..."
                   rows={3}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Mật khẩu lớp {!editingClassroom && '*'}</label>
+                <input
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder={editingClassroom ? 'Nếu muốn đổi mật khẩu, nhập mật khẩu mới' : 'Học sinh dùng mật khẩu này để tham gia'}
+                  required={!editingClassroom}
                 />
               </div>
 

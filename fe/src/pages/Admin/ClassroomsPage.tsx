@@ -198,6 +198,7 @@ const ClassroomsPage = () => {
                   <th>Khối</th>
                   <th>Năm học</th>
                   <th>Học sinh</th>
+                  <th>Meet</th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
@@ -214,6 +215,13 @@ const ClassroomsPage = () => {
                       <span style={{ fontWeight: 600, color: '#667eea' }}>
                         {classroom.studentCount || 0}
                       </span>
+                    </td>
+                    <td>
+                      {classroom.meetUrl ? (
+                        <a href={classroom.meetUrl} target="_blank" rel="noopener noreferrer" className={styles.btnMeet}>
+                          🎥 Meet
+                        </a>
+                      ) : <span className={styles.cellMuted}>—</span>}
                     </td>
                     <td>
                       <span className={`${styles.badge} ${classroom.isActive ? styles.active : styles.inactive}`}>

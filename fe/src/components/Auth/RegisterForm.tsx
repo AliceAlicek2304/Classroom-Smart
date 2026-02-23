@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { authAPI } from '../../services/authService'
+import { useToast } from '../Toast'
 import styles from './AuthForm.module.css'
 
 interface RegisterFormProps {
@@ -17,6 +19,7 @@ const RegisterForm = ({ onSuccess, onToggleLogin }: RegisterFormProps) => {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const toast = useToast()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -31,7 +34,6 @@ const RegisterForm = ({ onSuccess, onToggleLogin }: RegisterFormProps) => {
     setLoading(true)
     setError('')
 
-    // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Mật khẩu không khớp')
       setLoading(false)
@@ -45,18 +47,25 @@ const RegisterForm = ({ onSuccess, onToggleLogin }: RegisterFormProps) => {
     }
 
     try {
-      // TODO: Integrate with backend API
-      console.log('Register data:', formData)
-      
-      // Temporary: simulate API call
-      setTimeout(() => {
-        setLoading(false)
-        alert('Đăng ký thành công! Vui lòng kiểm tra email của bạn.')
+      const response = await authAPI.register({
+        fullName: formData.fullName,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        birthDay: formData.birthDay || undefined
+      })
+
+      if (response.success) {
+        toast.success(response.message || 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.')
         if (onSuccess) onSuccess()
         onToggleLogin()
-      }, 1000)
-    } catch (err) {
-      setError('Đăng ký thất bại. Vui lòng thử lại.')
+      } else {
+        setError(response.message || 'Đăng ký thất bại. Vui lòng thử lại.')
+      }
+    } catch (err: unknown) {
+      const errorResponse = (err as { response?: { data?: { message?: string } } })?.response?.data
+      setError(errorResponse?.message || 'Đăng ký thất bại. Vui lòng thử lại.')
+    } finally {
       setLoading(false)
     }
   }

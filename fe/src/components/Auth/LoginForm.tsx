@@ -53,6 +53,8 @@ const LoginForm = ({ onSuccess, onToggleRegister, onForgotPassword }: LoginFormP
             navigate('/admin')
           } else if (role === 'TEACHER') {
             navigate('/teacher')
+          } else if (role === 'CUSTOMER') {
+            navigate('/customer/my-classrooms')
           } else {
             navigate('/')
           }

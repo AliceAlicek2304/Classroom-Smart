@@ -2,6 +2,7 @@ package com.alice.education.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,8 @@ public class ClassroomService {
         classroom.setTeacher(teacher);
         classroom.setSubject(subject);
         classroom.setIsActive(true);
+        classroom.setMeetUrl(generateMeetUrl());
+        classroom.setPassword(request.getPassword());
         
         Classroom savedClassroom = classroomRepository.save(classroom);
         return mapToResponse(savedClassroom);
@@ -120,7 +123,10 @@ public class ClassroomService {
         classroom.setSchoolYear(request.getSchoolYear());
         classroom.setDescription(request.getDescription());
         classroom.setSubject(subject);
-        
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            classroom.setPassword(request.getPassword());
+        }
+
         Classroom updatedClassroom = classroomRepository.save(classroom);
         return mapToResponse(updatedClassroom);
     }
@@ -207,9 +213,56 @@ public class ClassroomService {
         response.setSubjectId(classroom.getSubject().getId());
         response.setSubjectName(classroom.getSubject().getName());
         response.setStudentCount((int) classStudentRepository.countByClassroomIdAndIsActive(classroom.getId(), true));
+        response.setMeetUrl(classroom.getMeetUrl());
         response.setCreatedAt(classroom.getCreatedAt());
         response.setUpdatedAt(classroom.getUpdatedAt());
         return response;
+    }
+
+    private String generateMeetUrl() {
+        String roomId = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        return "https://meet.jit.si/classroomsmart-" + roomId;
+    }
+
+    public StudentInClassResponse enrollWithPassword(Long classroomId, String password) {
+        Classroom classroom = classroomRepository.findById(classroomId)
+            .orElseThrow(() -> new RuntimeException("Classroom not found"));
+
+        if (!Boolean.TRUE.equals(classroom.getIsActive()))
+            throw new RuntimeException("L\u1edbp h\u1ecdc kh\u00f4ng c\u00f2n ho\u1ea1t \u0111\u1ed9ng");
+
+        // N\u1ebfu l\u1edbp c\u00f3 \u0111\u1eb7t m\u1eadt kh\u1ea9u th\u00ec ki\u1ec3m tra, null = m\u1edf (ch\u1ea5p nh\u1eadn m\u1ecdi m\u1eadt kh\u1ea9u)
+        if (classroom.getPassword() != null && !classroom.getPassword().equals(password))
+            throw new RuntimeException("M\u1eadt kh\u1ea9u l\u1edbp kh\u00f4ng \u0111\u00fang");
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account student = accountRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (classStudentRepository.existsByClassroomIdAndStudentIdAndIsActive(classroomId, student.getId(), true))
+            throw new RuntimeException("B\u1ea1n \u0111\u00e3 tham gia l\u1edbp h\u1ecdc n\u00e0y");
+
+        Optional<ClassStudent> existing = classStudentRepository.findByClassroomIdAndStudentId(classroomId, student.getId());
+        ClassStudent classStudent;
+        if (existing.isPresent()) {
+            classStudent = existing.get();
+            classStudent.setIsActive(true);
+        } else {
+            classStudent = new ClassStudent(classroom, student);
+            classStudent.setIsActive(true);
+        }
+
+        return mapToStudentResponse(classStudentRepository.save(classStudent));
+    }
+
+    public List<ClassroomResponse> getEnrolledClassrooms() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account student = accountRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return classStudentRepository.findActiveByStudentId(student.getId()).stream()
+            .map(cs -> mapToResponse(cs.getClassroom()))
+            .collect(Collectors.toList());
     }
     
     private StudentInClassResponse mapToStudentResponse(ClassStudent classStudent) {

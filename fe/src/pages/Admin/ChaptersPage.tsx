@@ -50,8 +50,8 @@ const ChaptersPage = () => {
       if (response.success) {
         setTextbooks(response.data)
       }
-    } catch (error) {
-      console.error('Failed to load textbooks')
+    } catch {
+      // textbooks unavailable
     }
   }
 

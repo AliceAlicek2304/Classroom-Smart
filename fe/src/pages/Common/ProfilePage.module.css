@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f8fafc;
+  background: var(--bg);
   padding-top: 68px; /* Chiều cao cố định của Header */
 }
 
@@ -195,7 +195,7 @@
   font-family: inherit;
   font-size: 1rem;
   transition: all 0.2s;
-  background: #f8fafc;
+  background: var(--bg);
 }
 
 .input:focus {

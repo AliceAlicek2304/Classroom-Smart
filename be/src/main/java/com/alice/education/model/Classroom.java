@@ -49,6 +49,12 @@ public class Classroom {
     
     @Column(name = "is_active")
     private Boolean isActive = true;
+
+    @Column(name = "meet_url", length = 255)
+    private String meetUrl;
+
+    @Column(name = "password", length = 100)
+    private String password;
     
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -178,5 +184,21 @@ public class Classroom {
     
     public void setClassStudents(Set<ClassStudent> classStudents) {
         this.classStudents = classStudents;
+    }
+
+    public String getMeetUrl() {
+        return meetUrl;
+    }
+
+    public void setMeetUrl(String meetUrl) {
+        this.meetUrl = meetUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

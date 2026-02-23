@@ -20,6 +20,7 @@ import com.alice.education.dto.AddStudentRequest;
 import com.alice.education.dto.ApiResponse;
 import com.alice.education.dto.ClassroomRequest;
 import com.alice.education.dto.ClassroomResponse;
+import com.alice.education.dto.EnrollRequest;
 import com.alice.education.dto.StudentInClassResponse;
 import com.alice.education.service.ClassroomService;
 
@@ -155,6 +156,30 @@ public class ClassroomController {
         try {
             List<StudentInClassResponse> responses = classroomService.getStudentsInClassroom(classroomId);
             return ApiResponse.success("Students retrieved successfully", responses);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{classroomId}/enroll")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<StudentInClassResponse>> enrollWithPassword(
+            @PathVariable Long classroomId,
+            @RequestBody EnrollRequest request) {
+        try {
+            StudentInClassResponse response = classroomService.enrollWithPassword(classroomId, request.getPassword());
+            return ApiResponse.success("Enrolled successfully", response);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @GetMapping("/enrolled")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<List<ClassroomResponse>>> getEnrolledClassrooms() {
+        try {
+            List<ClassroomResponse> responses = classroomService.getEnrolledClassrooms();
+            return ApiResponse.success("Enrolled classrooms retrieved successfully", responses);
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }

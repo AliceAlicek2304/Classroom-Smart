@@ -18,6 +18,7 @@ export interface Classroom {
   subjectId: number
   subjectName: string
   studentCount: number
+  meetUrl: string
   createdAt: string
   updatedAt: string
 }
@@ -28,6 +29,11 @@ export interface ClassroomRequest {
   schoolYear: string
   description: string
   subjectId: number
+  password: string
+}
+
+export interface EnrollRequest {
+  password: string
 }
 
 const classroomAPI = {
@@ -45,7 +51,12 @@ const classroomAPI = {
   
   update: (id: number, data: ClassroomRequest) => api.put<ApiResponse<Classroom>>(`/classrooms/${id}`, data),
   
-  delete: (id: number) => api.delete<ApiResponse<void>>(`/classrooms/${id}`)
+  delete: (id: number) => api.delete<ApiResponse<void>>(`/classrooms/${id}`),
+
+  enroll: (classroomId: number, password: string) =>
+    api.post<ApiResponse<unknown>>(`/classrooms/${classroomId}/enroll`, { password }),
+
+  getEnrolled: () => api.get<ApiResponse<Classroom[]>>('/classrooms/enrolled'),
 }
 
 export default classroomAPI

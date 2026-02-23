@@ -105,8 +105,8 @@ const Header = () => {
                     <span className={styles.dropdownIcon}>👤</span>
                     Hồ sơ của tôi
                   </Link>
-                  {user.role !== 'ADMIN' && user.role !== 'TEACHER' && (
-                    <Link to="/my-courses" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+                  {user.role === 'CUSTOMER' && (
+                    <Link to="/customer/my-classrooms" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
                       <span className={styles.dropdownIcon}>📚</span>
                       Khóa học của tôi
                     </Link>
