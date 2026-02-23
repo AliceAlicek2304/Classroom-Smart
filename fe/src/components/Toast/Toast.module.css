@@ -1,127 +1,86 @@
+/* ===== Toast - Clean Neobrutalism Style ===== */
+
 .toast {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 20px;
+  padding: 14px 18px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: 
-    0 4px 15px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.08);
-  min-width: 300px;
-  max-width: 450px;
-  animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background: var(--bg-white);
+  border: 2px solid var(--dark);
+  box-shadow: 4px 4px 0 var(--dark);
+  min-width: 280px;
+  max-width: 420px;
+  animation: slideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
-}
-
-.toast::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
+  font-family: var(--font);
 }
 
 .toast.exit {
-  animation: slideOut 0.3s ease-in forwards;
+  animation: slideOut 0.2s ease-in forwards;
 }
 
 @keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
 }
 
 @keyframes slideOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
+  from { transform: translateX(0);   opacity: 1; }
+  to   { transform: translateX(110%); opacity: 0; }
 }
 
 .icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 2px solid currentColor;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
+  font-size: 13px;
+  font-weight: 800;
   flex-shrink: 0;
 }
 
 .message {
   flex: 1;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--dark);
   line-height: 1.4;
 }
 
 .closeBtn {
   background: none;
   border: none;
-  font-size: 20px;
-  color: #999;
+  font-size: 18px;
+  color: var(--gray);
   cursor: pointer;
   padding: 0;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
+  border-radius: 6px;
+  transition: all 0.15s;
   flex-shrink: 0;
+  font-family: var(--font);
 }
 
-.closeBtn:hover {
-  background: rgba(0, 0, 0, 0.1);
-  color: #666;
-}
+.closeBtn:hover { background: var(--gray-light); color: var(--dark); }
 
-.success::before {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-}
+/* Type colors */
+.success { border-color: var(--green-dark); }
+.success .icon { color: var(--green-dark); background: var(--green-bg); border-color: var(--green); }
 
-.success .icon {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-}
+.error { border-color: var(--red); }
+.error .icon { color: var(--red); background: var(--red-light); }
 
-.error::before {
-  background: linear-gradient(135deg, #f44336, #e53935);
-}
+.warning { border-color: #D97706; }
+.warning .icon { color: #D97706; background: #FEF3C7; }
 
-.error .icon {
-  background: linear-gradient(135deg, #f44336, #e53935);
-}
-
-.warning::before {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-}
-
-.warning .icon {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-}
-
-.info::before {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-}
-
-.info .icon {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-}
+.info { border-color: #2563EB; }
+.info .icon { color: #2563EB; background: #EFF6FF; }

@@ -67,13 +67,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <span className={styles.navIcon}>📖</span>
               Textbooks
             </Link>
-            <Link 
-              to="/admin/chapters" 
-              className={`${styles.navLink} ${isActive('/admin/chapters') ? styles.active : ''}`}
-            >
-              <span className={styles.navIcon}>📝</span>
-              Chapters
-            </Link>
           </div>
 
           <div className={styles.navSection}>
@@ -105,6 +98,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <p>{user?.role}</p>
             </div>
           </div>
+          <Link to="/" className={styles.homeBtn}>
+            <span>🏠</span>
+            Home
+          </Link>
           <button className={styles.logoutBtn} onClick={handleLogout}>
             <span>🚪</span>
             Logout

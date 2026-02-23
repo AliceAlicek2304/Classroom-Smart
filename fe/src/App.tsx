@@ -7,7 +7,8 @@ import ResetPasswordPage from './pages/Auth/ResetPasswordPage'
 import AdminDashboard from './pages/Admin/AdminDashboard'
 import SubjectsPage from './pages/Admin/SubjectsPage'
 import TextbooksPage from './pages/Admin/TextbooksPage'
-import ChaptersPage from './pages/Admin/ChaptersPage'
+import ClassroomsPage from './pages/Admin/ClassroomsPage'
+import StudentsPage from './pages/Admin/StudentsPage'
 import TeacherDashboard from './pages/Teacher/TeacherDashboard'
 import TeacherClassroomsPage from './pages/Teacher/TeacherClassroomsPage'
 import './App.css'
@@ -36,19 +37,14 @@ function App() {
                 <TextbooksPage />
               </ProtectedRoute>
             } />
-            <Route path="/admin/chapters" element={
-              <ProtectedRoute requiredRole="ADMIN">
-                <ChaptersPage />
-              </ProtectedRoute>
-            } />
             <Route path="/admin/classrooms" element={
               <ProtectedRoute requiredRole="ADMIN">
-                <div>Classrooms Management - Coming Soon</div>
+                <ClassroomsPage />
               </ProtectedRoute>
             } />
             <Route path="/admin/students" element={
               <ProtectedRoute requiredRole="ADMIN">
-                <div>Students Management - Coming Soon</div>
+                <StudentsPage />
               </ProtectedRoute>
             } />
             

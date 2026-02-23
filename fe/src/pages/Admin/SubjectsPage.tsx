@@ -70,7 +70,7 @@ const SubjectsPage = () => {
     setFormData({
       name: subject.name,
       description: subject.description,
-      grade: subject.grade,
+      grade: subject.grade || 6,
       isActive: subject.isActive
     })
     setShowModal(true)

@@ -66,6 +66,9 @@ const TeacherLayout = ({ children }: TeacherLayoutProps) => {
               <div className={styles.userRole}>Giáo viên</div>
             </div>
           </div>
+          <Link to="/" className={styles.homeBtn}>
+            <span>🏠</span> Home
+          </Link>
           <button className={styles.logoutBtn} onClick={handleLogout}>
             <span>🚪</span> Đăng xuất
           </button>

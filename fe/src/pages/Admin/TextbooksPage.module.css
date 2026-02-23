@@ -1,0 +1,184 @@
+/* ===== TextbooksPage - Inline Chapter Panel ===== */
+
+.textbookList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.textbookCard {
+  background: var(--bg-white);
+  border: 2px solid var(--dark);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 3px 3px 0 var(--dark);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.textbookCard:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--dark);
+}
+
+/* Row for the textbook itself */
+.textbookRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-white);
+}
+
+.expandBtn {
+  background: var(--bg);
+  border: 1.5px solid var(--dark);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  font-family: var(--font);
+}
+
+.expandBtn:hover {
+  background: var(--green-bg);
+  border-color: var(--green);
+}
+
+.expandIcon {
+  display: inline-block;
+  font-size: 0.7rem;
+  color: var(--gray);
+  transition: transform 0.2s ease;
+}
+
+.expandIcon.expanded {
+  transform: rotate(90deg);
+  color: var(--green-dark);
+}
+
+.textbookInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.textbookMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.textbookTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.textbookMeta {
+  font-size: 0.8rem;
+  color: var(--gray);
+  font-weight: 500;
+}
+
+.textbookActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* ===== Chapters Panel ===== */
+.chaptersPanel {
+  border-top: 2px solid var(--dark);
+  background: var(--bg);
+  padding: 1rem 1.25rem 1.25rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.chaptersPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.875rem;
+}
+
+.chapterCount {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.addChapterBtn {
+  padding: 0.45rem 0.875rem;
+  background: var(--green);
+  color: var(--dark);
+  border: 1.5px solid var(--dark);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.82rem;
+  transition: var(--transition);
+  box-shadow: 2px 2px 0 var(--dark);
+  font-family: var(--font);
+}
+
+.addChapterBtn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--dark);
+  background: var(--green-dark);
+  color: #fff;
+}
+
+.chapterLoading {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--gray);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.chapterEmpty {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--bg-white);
+  border: 1.5px dashed var(--gray-light);
+  border-radius: 10px;
+}
+
+.chapterEmpty p {
+  color: var(--gray);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.inlineAddBtn {
+  background: none;
+  border: none;
+  color: var(--green-dark);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: inherit;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.chapterTable {
+  background: var(--bg-white);
+  border: 2px solid var(--dark);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 2px 2px 0 var(--dark);
+}

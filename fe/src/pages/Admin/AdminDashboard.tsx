@@ -89,20 +89,16 @@ const AdminDashboard = () => {
             </div>
             <div className={styles.quickActions}>
               <Link to="/admin/subjects" className={styles.actionBtn}>
-                <span className={styles.actionIcon}>➕</span>
+                <span className={styles.actionIcon}>📚</span>
                 Add New Subject
               </Link>
               <Link to="/admin/textbooks" className={styles.actionBtn}>
-                <span className={styles.actionIcon}>➕</span>
+                <span className={styles.actionIcon}>📖</span>
                 Add New Textbook
               </Link>
               <Link to="/admin/classrooms" className={styles.actionBtn}>
-                <span className={styles.actionIcon}>➕</span>
+                <span className={styles.actionIcon}>🏫</span>
                 Create Classroom
-              </Link>
-              <Link to="/admin/chapters" className={styles.actionBtn}>
-                <span className={styles.actionIcon}>➕</span>
-                Add Chapter
               </Link>
             </div>
           </div>

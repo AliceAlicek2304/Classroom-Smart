@@ -1,12 +1,14 @@
+/* ===== TeacherLayout - matches AdminLayout style ===== */
+
 .layout {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: var(--bg);
 }
 
 .sidebar {
-  width: 280px;
-  background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+  width: 260px;
+  background: var(--dark);
   color: white;
   display: flex;
   flex-direction: column;
@@ -14,92 +16,105 @@
   height: 100vh;
   left: 0;
   top: 0;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  border-right: 2px solid rgba(255,255,255,0.08);
+  overflow-y: auto;
 }
 
 .sidebarHeader {
-  padding: 2rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.75rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.25rem;
-  font-weight: 700;
 }
 
 .logoIcon {
-  font-size: 2rem;
+  width: 38px;
+  height: 38px;
+  background: var(--green);
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
 .logoText {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: white;
 }
 
 .nav {
   flex: 1;
-  padding: 1.5rem 0;
+  padding: 1.25rem 0.625rem;
 }
 
 .navLink,
 .navLinkActive {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  color: rgba(255, 255, 255, 0.7);
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  color: rgba(255,255,255,0.65);
   text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  border-left: 3px solid transparent;
+  transition: var(--transition);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  margin-bottom: 0.25rem;
 }
 
 .navIcon {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .navLink:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255,255,255,0.08);
   color: white;
-  border-left-color: rgba(102, 126, 234, 0.5);
 }
 
 .navLinkActive {
-  background: rgba(102, 126, 234, 0.1);
-  color: white;
-  border-left-color: #667eea;
+  background: var(--green);
+  color: var(--dark);
+  font-weight: 800;
 }
 
 .sidebarFooter {
-  padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+  padding: 0.625rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
 }
 
 .userAvatar {
-  width: 45px;
-  height: 45px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--green);
+  border: 2px solid rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--dark);
+  flex-shrink: 0;
   overflow: hidden;
 }
 
@@ -115,58 +130,77 @@
 }
 
 .userName {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .userRole {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
 }
 
-.logoutBtn {
+.homeBtn {
   width: 100%;
-  padding: 0.75rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.7rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
   border-radius: 8px;
-  color: #fca5a5;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: all 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+  font-family: var(--font);
+}
+
+.homeBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
+.logoutBtn {
+  width: 100%;
+  padding: 0.7rem;
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #fca5a5;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font);
 }
 
 .logoutBtn:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #fee2e2;
+  background: rgba(239,68,68,0.25);
+  color: #fecaca;
 }
 
 .main {
   flex: 1;
-  margin-left: 280px;
+  margin-left: 260px;
   padding: 2rem;
   overflow-y: auto;
+  background: var(--bg);
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    width: 70px;
-  }
-
-  .logoText,
-  .userDetails {
-    display: none;
-  }
-
-  .main {
-    margin-left: 70px;
-  }
+  .sidebar { width: 220px; }
+  .main { margin-left: 220px; padding: 1.25rem; }
 }
