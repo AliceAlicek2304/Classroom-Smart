@@ -6,47 +6,45 @@ const Footer = () => {
       <div className={styles.footerContent}>
         <div className={styles.footerBrand}>
           <h3>🎓 Classroom Smart</h3>
-          <p>Empowering learners worldwide with AI-powered education platform</p>
+          <p>Hệ thống quản lý học tập số của Trường THCS Ngô Quyền.</p>
           <div className={styles.socialLinks}>
             <a href="#" aria-label="Facebook">📘</a>
-            <a href="#" aria-label="Twitter">🐦</a>
-            <a href="#" aria-label="LinkedIn">💼</a>
-            <a href="#" aria-label="Instagram">📷</a>
+            <a href="#" aria-label="YouTube">▶️</a>
+            <a href="#" aria-label="Zalo">💬</a>
           </div>
         </div>
         <div className={styles.footerLinks}>
           <div>
-            <h4>Platform</h4>
-            <a href="#">Courses</a>
-            <a href="#">Teachers</a>
-            <a href="#">Pricing</a>
-            <a href="#">Become Instructor</a>
+            <h4>Hệ thống</h4>
+            <a href="#">Trang chủ</a>
+            <a href="#">Dành cho giáo viên</a>
+            <a href="#">Dành cho học sinh</a>
+            <a href="#">Quản trị viên</a>
           </div>
           <div>
-            <h4>Company</h4>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
-            <a href="#">Careers</a>
-            <a href="#">Press Kit</a>
+            <h4>Tính năng</h4>
+            <a href="#">Quản lý lớp học</a>
+            <a href="#">Bài tập trực tuyến</a>
+            <a href="#">Kiểm tra có đếm giờ</a>
+            <a href="#">AI tạo câu hỏi MCQ</a>
           </div>
           <div>
-            <h4>Resources</h4>
-            <a href="#">Blog</a>
-            <a href="#">Help Center</a>
-            <a href="#">Community</a>
-            <a href="#">Support</a>
+            <h4>Tài nguyên</h4>
+            <a href="#">Sách giáo khoa THCS</a>
+            <a href="#">Ngân hàng câu hỏi</a>
+            <a href="#">Hướng dẫn sử dụng</a>
+            <a href="#">Hỗ trợ kỹ thuật</a>
           </div>
           <div>
-            <h4>Legal</h4>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Cookie Policy</a>
-            <a href="#">Sitemap</a>
+            <h4>Chính sách</h4>
+            <a href="#">Bảo mật thông tin</a>
+            <a href="#">Điều khoản sử dụng</a>
+            <a href="#">Liên hệ</a>
           </div>
         </div>
       </div>
       <div className={styles.footerBottom}>
-        <p>© 2026 Classroom Smart. All rights reserved. Built with ❤️ for learners worldwide.</p>
+        <p>© 2026 Classroom Smart — Trường THCS Ngô Quyền. Tất cả quyền được bảo lưu.</p>
       </div>
     </footer>
   )

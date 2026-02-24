@@ -47,15 +47,18 @@ const Header = () => {
       <header className={styles.header}>
         <div className={styles.container}>
           <Link to="/" className={styles.logo}>
-            <div className={styles.logoIcon}>🎓</div>
-            <span className={styles.logoText}>Classroom Smart</span>
+            <div className={styles.logoIcon}>�</div>
+            <div className={styles.logoText}>
+              <span className={styles.logoMain}>Classroom Smart</span>
+              <span className={styles.logoSub}>THCS Ngô Quyền</span>
+            </div>
           </Link>
 
           <nav className={styles.nav}>
-            <Link to="/" className={styles.navLink}>Courses</Link>
-            <Link to="/" className={styles.navLink}>Teachers</Link>
-            <Link to="/" className={styles.navLink}>Pricing</Link>
-            <Link to="/" className={styles.navLink}>About</Link>
+            <Link to="/" className={styles.navLink}>Trang chủ</Link>
+            <a href="#subjects" className={styles.navLink}>Môn học</a>
+            <a href="#roles" className={styles.navLink}>Tính năng</a>
+            <a href="#how" className={styles.navLink}>Hướng dẫn</a>
           </nav>
 
           {isAuthenticated && user ? (
@@ -125,17 +128,17 @@ const Header = () => {
             </div>
           ) : (
             <div className={styles.authButtons}>
-              <button 
-                onClick={() => openAuthModal('login')} 
+              <button
+                onClick={() => openAuthModal('login')}
                 className={styles.btnLogin}
               >
-                Log In
+                Đăng nhập
               </button>
-              <button 
-                onClick={() => openAuthModal('register')} 
+              <button
+                onClick={() => openAuthModal('register')}
                 className={styles.btnRegister}
               >
-                Start Free
+                Đăng ký
               </button>
             </div>
           )}

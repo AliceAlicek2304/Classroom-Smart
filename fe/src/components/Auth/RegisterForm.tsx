@@ -74,8 +74,8 @@ const RegisterForm = ({ onSuccess, onToggleLogin }: RegisterFormProps) => {
     <div className={styles.authFormContainer}>
       <div className={styles.authHeader}>
         <span className={styles.authIcon}>🎉</span>
-        <h2>Tham gia EDU-AI!</h2>
-        <p>Tạo tài khoản và bắt đầu học ngay hôm nay</p>
+        <h2>Tham gia Classroom Smart!</h2>
+        <p>Tạo tài khoản để bắt đầu sử dụng hệ thống</p>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.authForm}>
