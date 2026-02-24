@@ -80,9 +80,9 @@ const CustomerClassroomsPage = () => {
   useEffect(() => {
     resetFilters()
     if (activeTab === 'mine') fetchMine()
-    else if (activeTab === 'all') fetchAll()
+    else if (activeTab === 'all') { fetchAll(); fetchMine() }
     else if (activeTab === 'docs') fetchDocs()
-    else if (activeTab === 'assignments') fetchMine() // reuse: need enrolled classrooms
+    else if (activeTab === 'assignments') fetchMine()
   }, [activeTab])
 
   const resetFilters = () => {
@@ -223,6 +223,7 @@ const CustomerClassroomsPage = () => {
       toast.success(`Đăng ký lớp "${enrollTarget.name}" thành công! 🎉`)
       setEnrollTarget(null)
       setEnrollPassword('')
+      fetchMine()
     } catch (error: unknown) {
       const e = error as { response?: { data?: { message?: string } } }
       toast.error(e.response?.data?.message || 'Đăng ký thất bại')
@@ -337,6 +338,17 @@ const CustomerClassroomsPage = () => {
                                 classroom.meetUrl
                                   ? <a href={classroom.meetUrl} target="_blank" rel="noopener noreferrer" className={styles.btnMeet}>🎥 Tham gia</a>
                                   : <span className={styles.cellMuted}>—</span>
+                              ) : myClassrooms.some(m => m.id === classroom.id) ? (
+                                <span style={{
+                                  display: 'inline-block',
+                                  padding: '0.35rem 0.75rem',
+                                  background: 'var(--green-bg)',
+                                  color: 'var(--green-dark)',
+                                  border: '1.5px solid var(--green)',
+                                  borderRadius: '8px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                }}>✅ Đã đăng ký</span>
                               ) : (
                                 <button
                                   className={styles.btnCreate}
