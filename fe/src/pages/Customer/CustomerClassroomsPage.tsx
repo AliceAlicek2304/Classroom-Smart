@@ -634,28 +634,59 @@ const CustomerClassroomsPage = () => {
                                     <th>Số câu</th>
                                     <th>Thời gian</th>
                                     <th>Hạn thi</th>
+                                    <th>Hành động</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {exams.map(e => (
-                                    <tr key={e.id}>
-                                      <td>
-                                        <div style={{ fontWeight: 600 }}>{e.title}</div>
-                                        {e.description && (
-                                          <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>
-                                            {e.description.slice(0, 80)}{e.description.length > 80 ? '…' : ''}
-                                          </div>
-                                        )}
-                                      </td>
-                                      <td>{e.totalQuestions} câu</td>
-                                      <td>{e.duration} phút</td>
-                                      <td>
-                                        {e.dueDate
-                                          ? new Date(e.dueDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-                                          : <span className={styles.cellMuted}>—</span>}
-                                      </td>
-                                    </tr>
-                                  ))}
+                                  {exams.map(e => {
+                                    const overdue = e.dueDate ? new Date(e.dueDate) < new Date() : false
+                                    const submitted = e.hasSubmitted === true
+                                    return (
+                                      <tr key={e.id}>
+                                        <td>
+                                          <div style={{ fontWeight: 600 }}>{e.title}</div>
+                                          {e.description && (
+                                            <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>
+                                              {e.description.slice(0, 80)}{e.description.length > 80 ? '…' : ''}
+                                            </div>
+                                          )}
+                                        </td>
+                                        <td>{e.totalQuestions} câu</td>
+                                        <td>{e.duration} phút</td>
+                                        <td>
+                                          {e.dueDate
+                                            ? new Date(e.dueDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                                            : <span className={styles.cellMuted}>—</span>}
+                                        </td>
+                                        <td>
+                                          {!submitted && overdue ? (
+                                            <span style={{ color: '#DC2626', fontWeight: 700, fontSize: '0.82rem' }}>⏰ Hết hạn</span>
+                                          ) : submitted && overdue ? (
+                                            <button
+                                              className={styles.btnCreate}
+                                              style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem', background: 'var(--dark)', color: '#fff' }}
+                                              onClick={() => navigate(`/customer/exam/${e.id}`)}>
+                                              📖 Xem kết quả
+                                            </button>
+                                          ) : submitted ? (
+                                            <button
+                                              className={styles.btnCreate}
+                                              style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem', background: 'var(--purple)', color: '#fff' }}
+                                              onClick={() => navigate(`/customer/exam/${e.id}`)}>
+                                              ✅ Đã nộp
+                                            </button>
+                                          ) : (
+                                            <button
+                                              className={styles.btnCreate}
+                                              style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem' }}
+                                              onClick={() => navigate(`/customer/exam/${e.id}`)}>
+                                              ▶️ Bắt đầu thi
+                                            </button>
+                                          )}
+                                        </td>
+                                      </tr>
+                                    )
+                                  })}
                                 </tbody>
                               </table>
                             </div>

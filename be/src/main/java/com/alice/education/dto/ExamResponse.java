@@ -19,6 +19,7 @@ public class ExamResponse {
     private int totalQuestions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean hasSubmitted;
 
     public ExamResponse() {}
 
@@ -63,4 +64,7 @@ public class ExamResponse {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public Boolean getHasSubmitted() { return hasSubmitted; }
+    public void setHasSubmitted(Boolean hasSubmitted) { this.hasSubmitted = hasSubmitted; }
 }

@@ -22,6 +22,7 @@ import com.alice.education.model.Question;
 import com.alice.education.repository.AccountRepository;
 import com.alice.education.repository.ClassroomRepository;
 import com.alice.education.repository.ExamRepository;
+import com.alice.education.repository.ExamSubmissionRepository;
 
 @Service
 public class ExamService {
@@ -34,6 +35,9 @@ public class ExamService {
 
     @Autowired
     private ClassroomRepository classroomRepository;
+
+    @Autowired
+    private ExamSubmissionRepository examSubmissionRepository;
 
     @Transactional
     public ExamResponse createExam(ExamRequest request) {
@@ -83,7 +87,11 @@ public class ExamService {
     public ExamResponse getExamById(Long id) {
         Exam exam = examRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Exam not found with id: " + id));
-        return mapToResponse(exam);
+        // Hide correct answers for students
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isStudent = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CUSTOMER"));
+        return mapToResponse(exam, !isStudent);
     }
 
     public List<ExamResponse> getAllExams() {
@@ -102,9 +110,13 @@ public class ExamService {
     }
 
     public List<ExamResponse> getExamsByClassroom(Long classroomId) {
-        return examRepository.findByClassroomsId(classroomId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return examRepository.findByClassroomsId(classroomId).stream().map(e -> {
+            // Always hide answers for student (classroom view)
+            ExamResponse res = mapToResponse(e, false);
+            res.setHasSubmitted(examSubmissionRepository.existsByExam_IdAndStudent_Username(e.getId(), username));
+            return res;
+        }).collect(Collectors.toList());
     }
 
     @Transactional
@@ -164,6 +176,10 @@ public class ExamService {
     }
 
     private ExamResponse mapToResponse(Exam e) {
+        return mapToResponse(e, true);
+    }
+
+    private ExamResponse mapToResponse(Exam e, boolean includeAnswers) {
         ExamResponse res = new ExamResponse();
         res.setId(e.getId());
         res.setTitle(e.getTitle());
@@ -194,7 +210,7 @@ public class ExamService {
             qr.setOptionB(q.getOptionB());
             qr.setOptionC(q.getOptionC());
             qr.setOptionD(q.getOptionD());
-            qr.setCorrectAnswer(q.getCorrectAnswer());
+            if (includeAnswers) qr.setCorrectAnswer(q.getCorrectAnswer());
             qr.setOrderNumber(q.getOrderNumber());
             return qr;
         }).collect(Collectors.toList());

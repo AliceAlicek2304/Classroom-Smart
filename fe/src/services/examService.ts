@@ -32,6 +32,34 @@ export interface ExamResponse {
   totalQuestions: number
   createdAt: string
   updatedAt: string
+  hasSubmitted?: boolean | null
+}
+
+export interface ExamSubmissionAnswerResult {
+  questionId: number
+  questionContent: string
+  selectedAnswer: string | null
+  correctAnswer: string
+  isCorrect: boolean
+}
+
+export interface ExamSubmissionResponse {
+  id: number
+  examId: number
+  examTitle: string
+  studentId: number
+  studentName: string
+  correctCount: number
+  totalCount: number
+  score: number
+  submittedAt: string
+  answers: ExamSubmissionAnswerResult[]
+  createdAt: string
+  classroomName?: string
+}
+
+export interface SubmitExamRequest {
+  answers: { questionId: number; selectedAnswer: string | null }[]
 }
 
 export interface QuestionRequest {
@@ -77,6 +105,15 @@ const examAPI = {
 
   delete: (id: number) =>
     api.delete<ApiResponse<void>>(`/exams/${id}`),
+
+  submit: (id: number, data: SubmitExamRequest) =>
+    api.post<ApiResponse<ExamSubmissionResponse>>(`/exams/${id}/submit`, data),
+
+  getMySubmissions: (id: number) =>
+    api.get<ApiResponse<ExamSubmissionResponse[]>>(`/exams/${id}/my-submissions`),
+
+  getAllSubmissions: (id: number) =>
+    api.get<ApiResponse<ExamSubmissionResponse[]>>(`/exams/${id}/submissions`),
 }
 
 export default examAPI
