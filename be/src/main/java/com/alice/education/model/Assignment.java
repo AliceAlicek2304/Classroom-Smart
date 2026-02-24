@@ -57,6 +57,10 @@ public class Assignment {
     @OrderBy("orderNumber ASC")
     private List<Question> questions = new ArrayList<>();
 
+    // null = không yêu cầu điểm chuẩn
+    @Column(name = "passing_score")
+    private Double passingScore;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "assignment_classrooms",
@@ -64,6 +68,9 @@ public class Assignment {
         inverseJoinColumns = @JoinColumn(name = "classroom_id")
     )
     private Set<Classroom> classrooms = new HashSet<>();
+
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AssignmentSubmission> submissions = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -97,8 +104,14 @@ public class Assignment {
     public List<Question> getQuestions() { return questions; }
     public void setQuestions(List<Question> questions) { this.questions = questions; }
 
+    public Double getPassingScore() { return passingScore; }
+    public void setPassingScore(Double passingScore) { this.passingScore = passingScore; }
+
     public Set<Classroom> getClassrooms() { return classrooms; }
     public void setClassrooms(Set<Classroom> classrooms) { this.classrooms = classrooms; }
+
+    public List<AssignmentSubmission> getSubmissions() { return submissions; }
+    public void setSubmissions(List<AssignmentSubmission> submissions) { this.submissions = submissions; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

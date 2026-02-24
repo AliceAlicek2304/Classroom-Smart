@@ -1,187 +1,146 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background: rgba(26, 26, 46, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
   padding: 1rem;
-  backdrop-filter: blur(4px);
-  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.15s ease-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .modal {
-  background: white;
-  border-radius: 20px;
-  max-width: 450px;
+  background: var(--bg);
+  border-radius: 16px;
+  border: 2px solid var(--dark);
+  box-shadow: 8px 8px 0 var(--dark);
+  max-width: 420px;
   width: 100%;
-  padding: 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease-out;
-  text-align: center;
+  overflow: hidden;
+  animation: slideUp 0.2s ease-out;
+  font-family: var(--font);
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modalHeader {
+  background: var(--dark);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 1.5rem;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  animation: iconBounce 0.5s ease-out;
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
-@keyframes iconBounce {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.icon.danger {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-}
-
-.icon.warning {
-  background: linear-gradient(135deg, #ffd93d 0%, #ff9838 100%);
-}
-
-.icon.info {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+.icon.danger  { background: #DC2626; }
+.icon.warning { background: #D97706; }
+.icon.info    { background: var(--purple); }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.body {
+  padding: 1.5rem;
 }
 
 .message {
-  font-size: 1rem;
-  color: #64748b;
-  margin: 0 0 2rem 0;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--gray);
+  margin: 0 0 1.5rem;
+  line-height: 1.65;
 }
 
 .actions {
   display: flex;
   gap: 0.75rem;
-  justify-content: center;
-}
-
-.btnCancel,
-.btnConfirm {
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 120px;
+  justify-content: flex-end;
 }
 
 .btnCancel {
-  background: #f1f5f9;
-  color: #64748b;
+  padding: 0.6rem 1.4rem;
+  border: 2px solid var(--dark);
+  border-radius: 8px;
+  background: var(--bg-white);
+  color: var(--dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--dark);
+  transition: all 0.12s;
+  font-family: var(--font);
 }
-
 .btnCancel:hover {
-  background: #e2e8f0;
-  transform: translateY(-2px);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--dark);
 }
 
 .btnConfirm {
-  color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 0.6rem 1.4rem;
+  border: 2px solid var(--dark);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: var(--font);
 }
 
 .btnConfirm.danger {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  background: #DC2626;
+  box-shadow: 3px 3px 0 #7F1D1D;
 }
-
 .btnConfirm.danger:hover {
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-  transform: translateY(-2px);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #7F1D1D;
 }
 
 .btnConfirm.warning {
-  background: linear-gradient(135deg, #ffd93d 0%, #ff9838 100%);
-  color: #1a202c;
+  background: #D97706;
+  box-shadow: 3px 3px 0 #78350F;
+  color: #fff;
 }
-
 .btnConfirm.warning:hover {
-  box-shadow: 0 8px 25px rgba(255, 217, 61, 0.4);
-  transform: translateY(-2px);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #78350F;
 }
 
 .btnConfirm.info {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--dark);
+  box-shadow: 3px 3px 0 var(--purple);
 }
-
 .btnConfirm.info:hover {
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-  transform: translateY(-2px);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--purple);
 }
 
-@media (max-width: 768px) {
-  .modal {
-    padding: 1.5rem;
-    margin: 1rem;
-  }
-
-  .icon {
-    width: 60px;
-    height: 60px;
-    font-size: 2rem;
-  }
-
-  .title {
-    font-size: 1.25rem;
-  }
-
-  .message {
-    font-size: 0.95rem;
-  }
-
-  .actions {
-    flex-direction: column-reverse;
-  }
-
-  .btnCancel,
-  .btnConfirm {
-    width: 100%;
-  }
+@media (max-width: 480px) {
+  .actions { flex-direction: column-reverse; }
+  .btnCancel, .btnConfirm { width: 100%; justify-content: center; }
 }

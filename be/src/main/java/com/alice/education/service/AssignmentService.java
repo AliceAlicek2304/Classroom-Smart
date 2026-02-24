@@ -21,6 +21,7 @@ import com.alice.education.model.Classroom;
 import com.alice.education.model.Question;
 import com.alice.education.repository.AccountRepository;
 import com.alice.education.repository.AssignmentRepository;
+import com.alice.education.repository.AssignmentSubmissionRepository;
 import com.alice.education.repository.ClassroomRepository;
 
 @Service
@@ -34,6 +35,9 @@ public class AssignmentService {
 
     @Autowired
     private ClassroomRepository classroomRepository;
+
+    @Autowired
+    private AssignmentSubmissionRepository submissionRepository;
 
     @Transactional
     public AssignmentResponse createAssignment(AssignmentRequest request) {
@@ -84,7 +88,11 @@ public class AssignmentService {
     public AssignmentResponse getAssignmentById(Long id) {
         Assignment assignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Assignment not found with id: " + id));
-        return mapToResponse(assignment);
+        // Hide correct answers for students
+        boolean isStudent = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CUSTOMER"));
+        return mapToResponse(assignment, !isStudent);
     }
 
     public List<AssignmentResponse> getAllAssignments() {
@@ -103,8 +111,13 @@ public class AssignmentService {
     }
 
     public List<AssignmentResponse> getAssignmentsByClassroom(Long classroomId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return assignmentRepository.findByClassroomsId(classroomId).stream()
-                .map(this::mapToResponse)
+                .map(a -> {
+                    AssignmentResponse res = mapToResponse(a, false); // hide answers for students
+                    res.setHasSubmitted(submissionRepository.existsByAssignment_IdAndStudent_Username(a.getId(), username));
+                    return res;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -165,6 +178,10 @@ public class AssignmentService {
     }
 
     private AssignmentResponse mapToResponse(Assignment a) {
+        return mapToResponse(a, true);
+    }
+
+    private AssignmentResponse mapToResponse(Assignment a, boolean includeAnswers) {
         AssignmentResponse res = new AssignmentResponse();
         res.setId(a.getId());
         res.setTitle(a.getTitle());
@@ -194,7 +211,7 @@ public class AssignmentService {
             qr.setOptionB(q.getOptionB());
             qr.setOptionC(q.getOptionC());
             qr.setOptionD(q.getOptionD());
-            qr.setCorrectAnswer(q.getCorrectAnswer());
+            if (includeAnswers) qr.setCorrectAnswer(q.getCorrectAnswer());
             qr.setOrderNumber(q.getOrderNumber());
             return qr;
         }).collect(Collectors.toList());

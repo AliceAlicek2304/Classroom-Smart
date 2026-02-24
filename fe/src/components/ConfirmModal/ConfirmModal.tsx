@@ -48,33 +48,29 @@ const ConfirmModal = ({
   return (
     <div className={styles.overlay} onClick={onCancel}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={`${styles.icon} ${styles[variant]}`}>
-          {variant === 'danger' && '🗑️'}
-          {variant === 'warning' && '⚠️'}
-          {variant === 'info' && 'ℹ️'}
+        <div className={styles.modalHeader}>
+          <div className={`${styles.icon} ${styles[variant]}`}>
+            {variant === 'danger' && '🗑️'}
+            {variant === 'warning' && '⚠️'}
+            {variant === 'info' && '📋'}
+          </div>
+          {title && <h3 className={styles.title}>{title}</h3>}
         </div>
-        
-        {title && <h3 className={styles.title}>{title}</h3>}
-        
-        <p className={styles.message}>{message}</p>
-        
-        <div className={styles.actions}>
-          <button 
-            className={styles.btnCancel} 
-            onClick={onCancel}
-          >
-            {cancelText}
-          </button>
-          <button 
-            className={`${styles.btnConfirm} ${styles[variant]}`}
-            onClick={() => {
-              onConfirm()
-              onCancel()
-            }}
-            autoFocus
-          >
-            {confirmText}
-          </button>
+
+        <div className={styles.body}>
+          <p className={styles.message}>{message}</p>
+          <div className={styles.actions}>
+            <button className={styles.btnCancel} onClick={onCancel}>
+              {cancelText}
+            </button>
+            <button
+              className={`${styles.btnConfirm} ${styles[variant]}`}
+              onClick={() => { onConfirm(); onCancel() }}
+              autoFocus
+            >
+              {confirmText}
+            </button>
+          </div>
         </div>
       </div>
     </div>

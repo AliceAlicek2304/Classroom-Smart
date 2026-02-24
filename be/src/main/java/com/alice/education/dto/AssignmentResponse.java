@@ -18,6 +18,7 @@ public class AssignmentResponse {
     private int totalQuestions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean hasSubmitted; // null for teacher/admin, true/false for students
 
     public AssignmentResponse() {}
 
@@ -59,4 +60,7 @@ public class AssignmentResponse {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public Boolean getHasSubmitted() { return hasSubmitted; }
+    public void setHasSubmitted(Boolean hasSubmitted) { this.hasSubmitted = hasSubmitted; }
 }

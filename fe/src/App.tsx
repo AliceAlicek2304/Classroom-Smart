@@ -14,6 +14,7 @@ import TeacherClassroomsPage from './pages/Teacher/TeacherClassroomsPage'
 import TeacherAssignmentsPage from './pages/Teacher/TeacherAssignmentsPage'
 import TeacherExamsPage from './pages/Teacher/TeacherExamsPage'
 import CustomerClassroomsPage from './pages/Customer/CustomerClassroomsPage'
+import DoAssignmentPage from './pages/Customer/DoAssignmentPage'
 import ProfilePage from './pages/Common/ProfilePage'
 import './App.css'
 
@@ -91,6 +92,12 @@ function App() {
             <Route path="/customer/assignments" element={
               <ProtectedRoute requiredRole="CUSTOMER">
                 <CustomerClassroomsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/customer/assignment/:id" element={
+              <ProtectedRoute requiredRole="CUSTOMER">
+                <DoAssignmentPage />
               </ProtectedRoute>
             } />
 

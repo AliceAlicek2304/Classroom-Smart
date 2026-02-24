@@ -549,10 +549,13 @@ const CustomerClassroomsPage = () => {
                                     <th>Tiêu đề</th>
                                     <th>Số câu</th>
                                     <th>Hạn nộp</th>
+                                    <th>Hành động</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {assignments.map(a => (
+                                  {assignments.map(a => {
+                                    const isOverdue = a.dueDate ? new Date(a.dueDate) < new Date() : false
+                                    return (
                                     <tr key={a.id}>
                                       <td>
                                         <div style={{ fontWeight: 600 }}>{a.title}</div>
@@ -565,11 +568,48 @@ const CustomerClassroomsPage = () => {
                                       <td>{a.totalQuestions} câu</td>
                                       <td>
                                         {a.dueDate
-                                          ? new Date(a.dueDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                                          ? <span style={{ color: isOverdue ? '#DC2626' : 'inherit', fontWeight: isOverdue ? 700 : 400 }}>
+                                              {new Date(a.dueDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                              {isOverdue ? ' (Hết hạn)' : ''}
+                                            </span>
                                           : <span className={styles.cellMuted}>—</span>}
                                       </td>
+                                      <td>
+                                        {isOverdue ? (
+                                          a.hasSubmitted ? (
+                                            <button
+                                              className={styles.btnCreate}
+                                              style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem', background: 'var(--dark)', color: '#fff' }}
+                                              onClick={() => navigate(`/customer/assignment/${a.id}`)}
+                                            >
+                                              📖 Xem kết quả
+                                            </button>
+                                          ) : (
+                                            <span style={{ color: '#DC2626', fontSize: '0.8rem', fontWeight: 700 }}>⏰ Hết hạn</span>
+                                          )
+                                        ) : (
+                                          a.hasSubmitted ? (
+                                            <button
+                                              className={styles.btnCreate}
+                                              style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem', background: 'var(--purple)', color: '#fff' }}
+                                              onClick={() => navigate(`/customer/assignment/${a.id}`)}
+                                            >
+                                              ✅ Đã nộp
+                                            </button>
+                                          ) : (
+                                            <button
+                                              className={styles.btnCreate}
+                                              style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem' }}
+                                              onClick={() => navigate(`/customer/assignment/${a.id}`)}
+                                            >
+                                              ✍️ Làm bài
+                                            </button>
+                                          )
+                                        )}
+                                      </td>
                                     </tr>
-                                  ))}
+                                    )
+                                  })}
                                 </tbody>
                               </table>
                             </div>

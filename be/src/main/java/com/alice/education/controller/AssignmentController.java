@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alice.education.dto.ApiResponse;
 import com.alice.education.dto.AssignmentRequest;
 import com.alice.education.dto.AssignmentResponse;
+import com.alice.education.dto.SubmissionResponse;
+import com.alice.education.dto.SubmitAssignmentRequest;
 import com.alice.education.service.AssignmentService;
+import com.alice.education.service.AssignmentSubmissionService;
 
 import jakarta.validation.Valid;
 
@@ -29,6 +32,9 @@ public class AssignmentController {
 
     @Autowired
     private AssignmentService assignmentService;
+
+    @Autowired
+    private AssignmentSubmissionService submissionService;
 
     @PostMapping
     @PreAuthorize("hasRole('TEACHER')")
@@ -116,6 +122,41 @@ public class AssignmentController {
         try {
             assignmentService.deleteAssignment(id);
             return ApiResponse.success("Xóa bài tập thành công", null);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/submit")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<SubmissionResponse>> submitAssignment(
+            @PathVariable Long id,
+            @RequestBody SubmitAssignmentRequest request) {
+        try {
+            SubmissionResponse response = submissionService.submitAssignment(id, request);
+            return ApiResponse.success("Nộp bài thành công", response);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/submissions")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    public ResponseEntity<ApiResponse<List<SubmissionResponse>>> getAllSubmissions(@PathVariable Long id) {
+        try {
+            List<SubmissionResponse> responses = submissionService.getAllSubmissionsForAssignment(id);
+            return ApiResponse.success("Lấy danh sách bài nộp thành công", responses);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/my-submissions")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<List<SubmissionResponse>>> getMySubmissions(@PathVariable Long id) {
+        try {
+            List<SubmissionResponse> responses = submissionService.getMySubmissions(id);
+            return ApiResponse.success("Lấy lịch sử nộp bài thành công", responses);
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }

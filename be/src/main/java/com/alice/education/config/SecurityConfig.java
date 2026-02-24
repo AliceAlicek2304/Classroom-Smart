@@ -98,6 +98,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/textbooks/**").authenticated()
                         .requestMatchers("/api/chapters/**").authenticated()
                         .requestMatchers("/api/classrooms/**").authenticated()
+                        .requestMatchers("/api/assignments/**").authenticated()
                         .requestMatchers("/chapter/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/img/avatar/**").permitAll()

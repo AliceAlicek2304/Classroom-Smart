@@ -31,6 +31,7 @@ export interface AssignmentResponse {
   totalQuestions: number
   createdAt: string
   updatedAt: string
+  hasSubmitted?: boolean | null
 }
 
 export interface QuestionRequest {
@@ -49,6 +50,38 @@ export interface AssignmentRequest {
   dueDate?: string
   classroomIds: number[]
   questions: QuestionRequest[]
+}
+
+export interface SubmitAnswerRequest {
+  questionId: number
+  selectedAnswer: string | null
+}
+
+export interface SubmitAssignmentRequest {
+  answers: SubmitAnswerRequest[]
+}
+
+export interface SubmissionAnswerResult {
+  questionId: number
+  questionContent: string
+  selectedAnswer: string | null
+  correctAnswer: string
+  isCorrect: boolean
+}
+
+export interface SubmissionResponse {
+  id: number
+  assignmentId: number
+  assignmentTitle: string
+  studentId: number
+  studentName: string
+  correctCount: number
+  totalCount: number
+  score: number
+  submittedAt: string
+  answers: SubmissionAnswerResult[]
+  createdAt: string
+  classroomName?: string
 }
 
 const assignmentAPI = {
@@ -75,6 +108,15 @@ const assignmentAPI = {
 
   delete: (id: number) =>
     api.delete<ApiResponse<void>>(`/assignments/${id}`),
+
+  submit: (id: number, data: SubmitAssignmentRequest) =>
+    api.post<ApiResponse<SubmissionResponse>>(`/assignments/${id}/submit`, data),
+
+  getMySubmissions: (id: number) =>
+    api.get<ApiResponse<SubmissionResponse[]>>(`/assignments/${id}/my-submissions`),
+
+  getAllSubmissions: (id: number) =>
+    api.get<ApiResponse<SubmissionResponse[]>>(`/assignments/${id}/submissions`),
 }
 
 export default assignmentAPI
