@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import StudentsModal from '../../components/StudentsModal'
 import { TableSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import classroomAPI, { type Classroom, type ClassroomRequest } from '../../services/classroomService'
@@ -187,10 +188,12 @@ const ClassroomsPage = () => {
         {loading ? (
           <TableSkeleton cols={9} />
         ) : filteredClassrooms.length === 0 ? (
-          <div className={styles.empty}>
-            <h3>Chưa có lớp học nào</h3>
-            <p>Nhấn "Tạo lớp học" để thêm lớp học mới</p>
-          </div>
+          <EmptyState
+            icon="🏫"
+            title="Chưa có lớp học nào"
+            message='Nhấn "Tạo lớp học" để thêm lớp học đầu tiên.'
+            action={{ label: '+ Tạo lớp học', onClick: handleCreate }}
+          />
         ) : (
           <div className={styles.tableCard}>
             <table className={styles.table}>

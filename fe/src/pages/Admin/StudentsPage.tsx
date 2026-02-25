@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
 import { TableSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import { useConfirm } from '../../hooks/useConfirm'
 import accountAPI, { type Student } from '../../services/accountService'
 import styles from './Admin.module.css'
@@ -115,10 +116,11 @@ const StudentsPage = () => {
         {loading ? (
           <TableSkeleton cols={7} />
         ) : filteredStudents.length === 0 ? (
-          <div className={styles.empty}>
-            <h3>Không tìm thấy học sinh</h3>
-            <p>Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
-          </div>
+          <EmptyState
+            icon="🎓"
+            title="Không tìm thấy học sinh"
+            message="Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc trạng thái."
+          />
         ) : (
           <div className={styles.tableCard}>
             <table className={styles.table}>

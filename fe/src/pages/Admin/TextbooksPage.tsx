@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
 import { CardSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import { useConfirm } from '../../hooks/useConfirm'
 import textbookAPI, { type Textbook, type TextbookRequest } from '../../services/textbookService'
 import chapterAPI, { type Chapter, type ChapterRequest } from '../../services/chapterService'
@@ -286,10 +287,12 @@ const TextbooksPage = () => {
         {loading ? (
           <CardSkeleton />
         ) : textbooks.length === 0 ? (
-          <div className={styles.empty}>
-            <h3>Chưa có sách giáo khoa nào</h3>
-            <p>Nhấn "Thêm sách" để tạo sách giáo khoa mới</p>
-          </div>
+          <EmptyState
+            icon="📖"
+            title="Chưa có sách giáo khoa nào"
+            message='Nhấn "Thêm sách" để tạo sách giáo khoa đầu tiên.'
+            action={{ label: '+ Thêm sách', onClick: handleCreateTextbook }}
+          />
         ) : (
           <div className={tbStyles.textbookList}>
             {paged.map((textbook) => {

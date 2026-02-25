@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
 import { TableSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import assignmentAPI, {
   type AssignmentResponse,
   type AssignmentRequest,
@@ -336,6 +337,13 @@ const TeacherAssignmentsPage = () => {
 
         {loading ? (
           <TableSkeleton cols={6} />
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon="📝"
+            title="Chưa có bài tập nào"
+            message='Nhấn "Tạo bài tập" để thêm bài tập đầu tiên cho lớp học.'
+            action={{ label: '+ Tạo bài tập', onClick: () => setShowModal(true) }}
+          />
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
@@ -394,11 +402,6 @@ const TeacherAssignmentsPage = () => {
                     </td>
                   </tr>
                 ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className={styles.noData}>Chưa có bài tập nào</td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
 import { TableSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import { useConfirm } from '../../hooks/useConfirm'
 import subjectAPI, { type Subject, type SubjectRequest } from '../../services/subjectService'
 import styles from './Admin.module.css'
@@ -167,10 +168,12 @@ const SubjectsPage = () => {
         {loading ? (
           <TableSkeleton cols={6} />
         ) : subjects.length === 0 ? (
-          <div className={styles.empty}>
-            <h3>Chưa có môn học nào</h3>
-            <p>Nhấn "Thêm môn học" để tạo môn học mới</p>
-          </div>
+          <EmptyState
+            icon="📚"
+            title="Chưa có môn học nào"
+            message='Nhấn "Thêm môn học" để tạo môn học đầu tiên.'
+            action={{ label: '+ Thêm môn học', onClick: handleCreate }}
+          />
         ) : (
           <div className={styles.tableCard}>
             <table className={styles.table}>

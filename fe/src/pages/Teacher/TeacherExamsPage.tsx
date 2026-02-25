@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
 import { TableSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import examAPI, {
   type ExamResponse,
   type ExamRequest,
@@ -355,6 +356,13 @@ const TeacherExamsPage = () => {
 
         {loading ? (
           <TableSkeleton cols={7} />
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon="📝"
+            title="Chưa có bài kiểm tra nào"
+            message='Nhấn "Tạo đề thi" để thêm bài kiểm tra đầu tiên cho lớp học.'
+            action={{ label: '+ Tạo đề thi', onClick: () => setShowModal(true) }}
+          />
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
@@ -425,11 +433,6 @@ const TeacherExamsPage = () => {
                     </td>
                   </tr>
                 ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className={styles.noData}>Chưa có bài kiểm tra nào</td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
 import { TableSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import classroomAPI, { type Classroom, type ClassroomRequest } from '../../services/classroomService'
 import subjectAPI, { type Subject, type ApiResponse as SubjectApiResponse } from '../../services/subjectService'
 import StudentsModal from '../../components/StudentsModal'
@@ -236,6 +237,13 @@ const TeacherClassroomsPage = () => {
 
       {loading ? (
         <TableSkeleton cols={8} />
+      ) : filteredClassrooms.length === 0 ? (
+        <EmptyState
+          icon="🏫"
+          title="Không tìm thấy lớp học nào"
+          message='Thử thay đổi bộ lọc hoặc nhấn "ạo lớp học" để thêm mới.'
+          action={{ label: '+ Tạo lớp học', onClick: handleCreate }}
+        />
       ) : (
         <div className={styles.tableCard}>
           <table className={styles.table}>
@@ -252,14 +260,7 @@ const TeacherClassroomsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredClassrooms.length === 0 ? (
-                <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>
-                    Không tìm thấy lớp học nào
-                  </td>
-                </tr>
-              ) : (
-                paged.map((classroom) => (
+              {paged.map((classroom) => (
                   <tr key={classroom.id}>
                     <td className={styles.cellBold}>{classroom.name}</td>
                     <td>{classroom.subjectName}</td>
@@ -296,8 +297,7 @@ const TeacherClassroomsPage = () => {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
