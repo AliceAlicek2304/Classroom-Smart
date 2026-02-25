@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
+import { CardSkeleton } from '../../components/Skeleton'
 import { useConfirm } from '../../hooks/useConfirm'
 import textbookAPI, { type Textbook, type TextbookRequest } from '../../services/textbookService'
 import chapterAPI, { type Chapter, type ChapterRequest } from '../../services/chapterService'
@@ -8,6 +9,8 @@ import { SERVER_URL } from '../../services/api'
 import subjectAPI, { type Subject } from '../../services/subjectService'
 import styles from './Admin.module.css'
 import tbStyles from './TextbooksPage.module.css'
+import { usePagination } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const TextbooksPage = () => {
   const [textbooks, setTextbooks] = useState<Textbook[]>([])
@@ -239,6 +242,8 @@ const TextbooksPage = () => {
     }
   }
 
+  const { paged, page, totalPages, total, pageSize, setPage } = usePagination(textbooks)
+
   return (
     <AdminLayout>
       <div className={styles.page}>
@@ -279,7 +284,7 @@ const TextbooksPage = () => {
 
         {/* ===== Textbook List ===== */}
         {loading ? (
-          <div className={styles.loading}>Đang tải...</div>
+          <CardSkeleton />
         ) : textbooks.length === 0 ? (
           <div className={styles.empty}>
             <h3>Chưa có sách giáo khoa nào</h3>
@@ -287,7 +292,7 @@ const TextbooksPage = () => {
           </div>
         ) : (
           <div className={tbStyles.textbookList}>
-            {textbooks.map((textbook) => {
+            {paged.map((textbook) => {
               const isExpanded = expandedTextbookId === textbook.id
               const chapters = chaptersByTextbook[textbook.id] || []
               const loadingCh = loadingChapters[textbook.id]
@@ -402,6 +407,7 @@ const TextbooksPage = () => {
             })}
           </div>
         )}
+        <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
 
         {/* ===== Textbook Modal ===== */}
         {showTextbookModal && (

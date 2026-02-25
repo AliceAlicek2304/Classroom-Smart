@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import StudentsModal from '../../components/StudentsModal'
+import { TableSkeleton } from '../../components/Skeleton'
 import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import classroomAPI, { type Classroom, type ClassroomRequest } from '../../services/classroomService'
 import subjectAPI, { type Subject, type ApiResponse as SubjectApiResponse } from '../../services/subjectService'
 import accountAPI, { type Teacher } from '../../services/accountService'
 import styles from './Admin.module.css'
+import { usePagination } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const ClassroomsPage = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([])
@@ -143,6 +146,7 @@ const ClassroomsPage = () => {
     c.subjectName?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
     c.teacherName?.toLowerCase().includes(searchKeyword.toLowerCase())
   )
+  const { paged, page, totalPages, total, pageSize, setPage } = usePagination(filteredClassrooms)
 
   return (
     <AdminLayout>
@@ -181,7 +185,7 @@ const ClassroomsPage = () => {
         </div>
 
         {loading ? (
-          <div className={styles.loading}>Đang tải...</div>
+          <TableSkeleton cols={9} />
         ) : filteredClassrooms.length === 0 ? (
           <div className={styles.empty}>
             <h3>Chưa có lớp học nào</h3>
@@ -204,7 +208,7 @@ const ClassroomsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredClassrooms.map((classroom) => (
+                {paged.map((classroom) => (
                   <tr key={classroom.id}>
                     <td><strong>{classroom.name}</strong></td>
                     <td>{classroom.subjectName}</td>
@@ -247,6 +251,7 @@ const ClassroomsPage = () => {
             </table>
           </div>
         )}
+        <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
 
         {showModal && (
           <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>

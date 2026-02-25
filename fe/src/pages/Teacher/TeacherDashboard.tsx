@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
 import classroomAPI, { type Classroom } from '../../services/classroomService'
+import { useCountUp } from '../../hooks/useCountUp'
 import styles from './TeacherDashboard.module.css'
 
 const TeacherDashboard = () => {
@@ -30,6 +31,11 @@ const TeacherDashboard = () => {
   const totalStudents = classrooms.reduce((sum, c) => sum + (c.studentCount || 0), 0)
   const totalSubjects = new Set(classrooms.map(c => c.subjectName)).size
 
+  const animTotal    = useCountUp(classrooms.length)
+  const animActive   = useCountUp(activeClassrooms.length)
+  const animStudents = useCountUp(totalStudents)
+  const animSubjects = useCountUp(totalSubjects)
+
   return (
     <TeacherLayout>
       <div className={styles.dashboard}>
@@ -42,22 +48,22 @@ const TeacherDashboard = () => {
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.purple}`}>🏫</div>
             <div className={styles.statLabel}>Tổng số lớp</div>
-            <div className={styles.statValue}>{classrooms.length}</div>
+            <div className={styles.statValue}>{animTotal}</div>
           </div>
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.green}`}>✅</div>
             <div className={styles.statLabel}>Lớp đang hoạt động</div>
-            <div className={styles.statValue}>{activeClassrooms.length}</div>
+            <div className={styles.statValue}>{animActive}</div>
           </div>
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.blue}`}>👥</div>
             <div className={styles.statLabel}>Tổng học sinh</div>
-            <div className={styles.statValue}>{totalStudents}</div>
+            <div className={styles.statValue}>{animStudents}</div>
           </div>
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.orange}`}>📚</div>
             <div className={styles.statLabel}>Môn học</div>
-            <div className={styles.statValue}>{totalSubjects}</div>
+            <div className={styles.statValue}>{animSubjects}</div>
           </div>
         </div>
 

@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
+import { TableSkeleton } from '../../components/Skeleton'
 import { useConfirm } from '../../hooks/useConfirm'
 import subjectAPI, { type Subject, type SubjectRequest } from '../../services/subjectService'
 import styles from './Admin.module.css'
+import { usePagination } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const SubjectsPage = () => {
   const [subjects, setSubjects] = useState<Subject[]>([])
@@ -121,6 +124,8 @@ const SubjectsPage = () => {
     }
   }
 
+  const { paged, page, totalPages, total, pageSize, setPage } = usePagination(subjects)
+
   return (
     <AdminLayout>
       <div className={styles.page}>
@@ -160,7 +165,7 @@ const SubjectsPage = () => {
         </div>
 
         {loading ? (
-          <div className={styles.loading}>Đang tải...</div>
+          <TableSkeleton cols={6} />
         ) : subjects.length === 0 ? (
           <div className={styles.empty}>
             <h3>Chưa có môn học nào</h3>
@@ -180,7 +185,7 @@ const SubjectsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {subjects.map((subject) => (
+                {paged.map((subject) => (
                   <tr key={subject.id}>
                     <td>{subject.id}</td>
                     <td><strong>{subject.name}</strong></td>
@@ -207,6 +212,7 @@ const SubjectsPage = () => {
             </table>
           </div>
         )}
+        <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
 
         {showModal && (
           <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>

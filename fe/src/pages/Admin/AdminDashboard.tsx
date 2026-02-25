@@ -4,6 +4,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import dashboardAPI, { type DashboardStats, type RecentActivity } from '../../services/dashboardService'
+import { useCountUp } from '../../hooks/useCountUp'
 import styles from './AdminDashboard.module.css'
 
 const AdminDashboard = () => {
@@ -35,6 +36,11 @@ const AdminDashboard = () => {
     }
   }
 
+  const animSubjects    = useCountUp(stats?.totalSubjects    ?? 0)
+  const animTextbooks   = useCountUp(stats?.totalTextbooks   ?? 0)
+  const animClassrooms  = useCountUp(stats?.activeClassrooms ?? 0)
+  const animStudents    = useCountUp(stats?.totalStudents    ?? 0)
+
   return (
     <AdminLayout>
       <div className={styles.dashboard}>
@@ -48,7 +54,7 @@ const AdminDashboard = () => {
             <div className={`${styles.statIcon} ${styles.purple}`}>📚</div>
             <div className={styles.statLabel}>Total Subjects</div>
             <div className={styles.statValue}>
-              {loading ? '...' : stats?.totalSubjects || 0}
+              {loading ? '…' : animSubjects}
             </div>
           </div>
 
@@ -56,7 +62,7 @@ const AdminDashboard = () => {
             <div className={`${styles.statIcon} ${styles.blue}`}>📖</div>
             <div className={styles.statLabel}>Total Textbooks</div>
             <div className={styles.statValue}>
-              {loading ? '...' : stats?.totalTextbooks || 0}
+              {loading ? '…' : animTextbooks}
             </div>
           </div>
 
@@ -64,7 +70,7 @@ const AdminDashboard = () => {
             <div className={`${styles.statIcon} ${styles.green}`}>🏫</div>
             <div className={styles.statLabel}>Active Classrooms</div>
             <div className={styles.statValue}>
-              {loading ? '...' : stats?.activeClassrooms || 0}
+              {loading ? '…' : animClassrooms}
             </div>
           </div>
 
@@ -72,7 +78,7 @@ const AdminDashboard = () => {
             <div className={`${styles.statIcon} ${styles.orange}`}>👨‍🎓</div>
             <div className={styles.statLabel}>Total Students</div>
             <div className={styles.statValue}>
-              {loading ? '...' : stats?.totalStudents || 0}
+              {loading ? '…' : animStudents}
             </div>
           </div>
         </div>

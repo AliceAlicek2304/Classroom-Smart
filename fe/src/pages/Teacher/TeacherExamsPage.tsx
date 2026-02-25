@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
+import { TableSkeleton } from '../../components/Skeleton'
 import examAPI, {
   type ExamResponse,
   type ExamRequest,
@@ -14,6 +15,8 @@ import aiAPI from '../../services/aiService'
 import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import styles from '../Admin/Admin.module.css'
+import { usePagination } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const EMPTY_QUESTION = (): QuestionRequest => ({
   content: '',
@@ -293,6 +296,7 @@ const TeacherExamsPage = () => {
 
   const examGrades = [...new Set(classrooms.map(c => String(c.gradeLevel)))].sort((a, b) => Number(a) - Number(b))
   const examClassroomOptions = [...new Set(exams.flatMap(e => e.classroomNames || []))].sort()
+  const { paged, page, totalPages, total, pageSize, setPage } = usePagination(filtered)
 
   return (
     <TeacherLayout>
@@ -350,7 +354,7 @@ const TeacherExamsPage = () => {
         </div>
 
         {loading ? (
-          <div className={styles.loading}>Đang tải...</div>
+          <TableSkeleton cols={7} />
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
@@ -366,7 +370,7 @@ const TeacherExamsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(e => (
+                {paged.map(e => (
                   <tr key={e.id}>
                     <td>
                       <div style={{ fontWeight: 600 }}>{e.title}</div>
@@ -430,6 +434,7 @@ const TeacherExamsPage = () => {
             </table>
           </div>
         )}
+        <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
       </div>
 
       {/* Modal */}

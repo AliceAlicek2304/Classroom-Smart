@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/AdminLayout/AdminLayout'
 import { useToast } from '../../components/Toast'
+import { TableSkeleton } from '../../components/Skeleton'
 import { useConfirm } from '../../hooks/useConfirm'
 import accountAPI, { type Student } from '../../services/accountService'
 import styles from './Admin.module.css'
+import { usePagination } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const StudentsPage = () => {
   const [students, setStudents] = useState<Student[]>([])
@@ -62,6 +65,7 @@ const StudentsPage = () => {
 
   const activeCount = students.filter(s => s.isActive).length
   const inactiveCount = students.filter(s => !s.isActive).length
+  const { paged, page, totalPages, total, pageSize, setPage } = usePagination(filteredStudents, 15)
 
   return (
     <AdminLayout>
@@ -109,7 +113,7 @@ const StudentsPage = () => {
         </div>
 
         {loading ? (
-          <div className={styles.loading}>Đang tải...</div>
+          <TableSkeleton cols={7} />
         ) : filteredStudents.length === 0 ? (
           <div className={styles.empty}>
             <h3>Không tìm thấy học sinh</h3>
@@ -130,7 +134,7 @@ const StudentsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((student) => (
+                {paged.map((student) => (
                   <tr key={student.id} style={{ opacity: student.isActive ? 1 : 0.6 }}>
                     <td>#{student.id}</td>
                     <td>
@@ -173,6 +177,7 @@ const StudentsPage = () => {
             </table>
           </div>
         )}
+        <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
         <ConfirmDialog />
       </div>
     </AdminLayout>

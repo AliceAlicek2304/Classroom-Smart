@@ -18,6 +18,7 @@ import CustomerClassroomsPage from './pages/Customer/CustomerClassroomsPage'
 import DoAssignmentPage from './pages/Customer/DoAssignmentPage'
 import DoExamPage from './pages/Customer/DoExamPage'
 import ProfilePage from './pages/Common/ProfilePage'
+import NotFoundPage from './pages/NotFound/NotFoundPage'
 import './App.css'
 
 function App() {
@@ -124,6 +125,8 @@ function App() {
                 <ProfilePage />
               </ProtectedRoute>
             } />
+
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Router>
       </ToastProvider>

@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
+import { TableSkeleton } from '../../components/Skeleton'
 import classroomAPI, { type Classroom, type ClassroomRequest } from '../../services/classroomService'
 import subjectAPI, { type Subject, type ApiResponse as SubjectApiResponse } from '../../services/subjectService'
 import StudentsModal from '../../components/StudentsModal'
 import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import styles from '../Admin/Admin.module.css'
+import { usePagination } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const TeacherClassroomsPage = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([])
@@ -157,6 +160,7 @@ const TeacherClassroomsPage = () => {
   })
 
   const uniqueSchoolYears = [...new Set(classrooms.map(c => c.schoolYear))].filter(Boolean).sort()
+  const { paged, page, totalPages, total, pageSize, setPage } = usePagination(filteredClassrooms)
 
   return (
     <TeacherLayout>
@@ -231,7 +235,7 @@ const TeacherClassroomsPage = () => {
       </div>
 
       {loading ? (
-        <div className={styles.loading}>Đang tải...</div>
+        <TableSkeleton cols={8} />
       ) : (
         <div className={styles.tableCard}>
           <table className={styles.table}>
@@ -255,7 +259,7 @@ const TeacherClassroomsPage = () => {
                   </td>
                 </tr>
               ) : (
-                filteredClassrooms.map((classroom) => (
+                paged.map((classroom) => (
                   <tr key={classroom.id}>
                     <td className={styles.cellBold}>{classroom.name}</td>
                     <td>{classroom.subjectName}</td>
@@ -298,6 +302,7 @@ const TeacherClassroomsPage = () => {
           </table>
         </div>
       )}
+      <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
 
       {showModal && (
         <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>

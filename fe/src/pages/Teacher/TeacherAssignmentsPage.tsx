@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
+import { TableSkeleton } from '../../components/Skeleton'
 import assignmentAPI, {
   type AssignmentResponse,
   type AssignmentRequest,
@@ -11,6 +12,8 @@ import aiAPI from '../../services/aiService'
 import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import styles from '../Admin/Admin.module.css'
+import { usePagination } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const EMPTY_QUESTION = (): QuestionRequest => ({
   content: '',
@@ -284,6 +287,7 @@ const TeacherAssignmentsPage = () => {
 
   const assignGrades = [...new Set(classrooms.map(c => String(c.gradeLevel)))].sort((a, b) => Number(a) - Number(b))
   const assignClassroomOptions = [...new Set(assignments.flatMap(a => a.classroomNames || []))].sort()
+  const { paged, page, totalPages, total, pageSize, setPage } = usePagination(filtered)
 
   return (
     <TeacherLayout>
@@ -331,7 +335,7 @@ const TeacherAssignmentsPage = () => {
         </div>
 
         {loading ? (
-          <div className={styles.loading}>Đang tải...</div>
+          <TableSkeleton cols={6} />
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
@@ -346,7 +350,7 @@ const TeacherAssignmentsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(a => (
+                {paged.map(a => (
                   <tr key={a.id}>
                     <td>
                       <div style={{ fontWeight: 600 }}>{a.title}</div>
@@ -399,6 +403,7 @@ const TeacherAssignmentsPage = () => {
             </table>
           </div>
         )}
+        <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
       </div>
 
       {/* Modal */}
