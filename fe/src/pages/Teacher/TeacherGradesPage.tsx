@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
+import { EmptyState } from '../../components/EmptyState'
+import { TableSkeleton } from '../../components/Skeleton'
 import classroomAPI, { type Classroom } from '../../services/classroomService'
 import gradeAPI, {
   type GradeBookResponse,
@@ -149,6 +151,50 @@ const TeacherGradesPage = () => {
     if (e.key === 'Escape') setEditingCell(null)
   }
 
+  const exportCSV = () => {
+    if (!gradeBook) return
+    const { classroomName, columns, rows } = gradeBook
+
+    // Build header row
+    const headerRow = [
+      'STT',
+      'Họ và tên',
+      'Tên đăng nhập',
+      ...columns.map(c => `${GRADE_TYPE_LABELS[c.type] || c.type} - ${c.name}`),
+      'Trung bình',
+    ]
+
+    // Build data rows
+    const dataRows = rows.map((row, idx) => {
+      const scores = columns.map(col => {
+        const entry = row.grades.find(g => g.columnId === col.id)
+        return entry?.score !== null && entry?.score !== undefined ? entry.score : ''
+      })
+      const numericScores = scores.filter(s => s !== '') as number[]
+      const avg = numericScores.length > 0
+        ? (numericScores.reduce((a, b) => a + (b as number), 0) / numericScores.length).toFixed(1)
+        : ''
+      return [idx + 1, row.studentName, row.username, ...scores, avg]
+    })
+
+    // Serialize to CSV
+    const escape = (v: string | number) => {
+      const s = String(v)
+      return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s
+    }
+    const csv = [headerRow, ...dataRows].map(r => r.map(escape).join(',')).join('\r\n')
+    const bom = '\uFEFF' // UTF-8 BOM so Excel renders Vietnamese correctly
+    const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    const safeName = classroomName.replace(/[/\\:*?"<>|]/g, '_')
+    a.href = url
+    a.download = `Bảng_điểm_${safeName}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success(`Đã xuất bảng điểm lớp ${classroomName}`)
+  }
+
   const handleAddColumn = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedClassroomId || !newColName.trim()) return
@@ -209,9 +255,20 @@ const TeacherGradesPage = () => {
             <div className={styles.subtitle}>Quản lý điểm số học sinh theo lớp</div>
           </div>
           {selectedClassroomId && (
-            <button className={styles.btnCreate} onClick={() => setShowAddColumn(true)}>
-              ➕ Thêm cột điểm
-            </button>
+            <div style={{ display: 'flex', gap: '0.625rem', flexWrap: 'wrap' }}>
+              {gradeBook && gradeBook.rows.length > 0 && (
+                <button
+                  className={styles.btnCreate}
+                  style={{ background: '#22C55E', borderColor: 'var(--dark)' }}
+                  onClick={exportCSV}
+                >
+                  📊 Xuất CSV
+                </button>
+              )}
+              <button className={styles.btnCreate} onClick={() => setShowAddColumn(true)}>
+                ➕ Thêm cột điểm
+              </button>
+            </div>
           )}
         </div>
 
@@ -231,21 +288,26 @@ const TeacherGradesPage = () => {
           </select>
         </div>
 
-        {loading && <div className={styles.loading}>Đang tải bảng điểm...</div>}
+        {loading && (
+          <TableSkeleton cols={5} rows={6} />
+        )}
 
         {!loading && !selectedClassroomId && (
-          <div className={styles.empty}>
-            <h3>Chọn lớp học để xem bảng điểm</h3>
-          </div>
+          <EmptyState
+            icon="📊"
+            title="Chọn lớp học để xem bảng điểm"
+            message="Sử dụng menu phía trên để chọn lớp bạn muốn quản lý."
+          />
         )}
 
         {!loading && gradeBook && (
           <>
             {gradeBook.rows.length === 0 ? (
-              <div className={styles.empty}>
-                <h3>Lớp chưa có học sinh nào</h3>
-                <p>Thêm học sinh vào lớp để bắt đầu nhập điểm.</p>
-              </div>
+              <EmptyState
+                icon="👥"
+                title="Lớp chưa có học sinh nào"
+                message="Thêm học sinh vào lớp để bắt đầu nhập điểm."
+              />
             ) : (
               <div className={gradeStyles.tableWrapper} ref={tableWrapperRef}>
                 <table className={gradeStyles.gradeTable}>

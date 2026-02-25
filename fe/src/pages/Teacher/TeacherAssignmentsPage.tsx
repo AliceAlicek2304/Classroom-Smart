@@ -9,7 +9,7 @@ import assignmentAPI, {
   type SubmissionResponse,
 } from '../../services/assignmentService'
 import classroomAPI, { type Classroom } from '../../services/classroomService'
-import aiAPI from '../../services/aiService'
+import aiAPI, { type RateLimitStatus } from '../../services/aiService'
 import { useToast } from '../../components/Toast'
 import { useConfirm } from '../../hooks/useConfirm'
 import styles from '../Admin/Admin.module.css'
@@ -58,6 +58,7 @@ const TeacherAssignmentsPage = () => {
   const [aiNumQuestions, setAiNumQuestions] = useState(5)
   const [aiFile, setAiFile] = useState<File | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
+  const [aiQuota, setAiQuota] = useState<RateLimitStatus | null>(null)
   const aiFileRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState<AssignmentRequest>({
@@ -71,6 +72,11 @@ const TeacherAssignmentsPage = () => {
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (!showAIPanel) return
+    aiAPI.getRateLimitStatus().then(res => setAiQuota(res.data.data)).catch(() => {})
+  }, [showAIPanel])
 
   const fetchData = async () => {
     try {
@@ -167,7 +173,12 @@ const TeacherAssignmentsPage = () => {
       toast.success(`✨ AI đã tạo ${newQuestions.length} câu hỏi!`)
       setShowAIPanel(false)
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Lỗi khi gọi AI, thử lại sau!')
+      if (error.response?.status === 429) {
+        const d = error.response.data
+        toast.error(d?.message || 'Quá nhiều yêu cầu AI, thử lại sau!')
+      } else {
+        toast.error(error.response?.data?.message || 'Lỗi khi gọi AI, thử lại sau!')
+      }
     } finally {
       setAiLoading(false)
     }
@@ -519,12 +530,39 @@ const TeacherAssignmentsPage = () => {
                       Mô tả chủ đề, nội dung câu hỏi cần tạo và/hoặc upload file PDF của chương học.
                     </p>
 
+                    {aiQuota && (
+                      <div style={{
+                        background: '#fff', border: '1.5px solid var(--dark)', borderRadius: 8,
+                        padding: '8px 12px', marginBottom: 14,
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 700, marginBottom: 4 }}>
+                          <span>🤖 Quota AI hôm nay</span>
+                          <span style={{ color: aiQuota.dayRemaining === 0 ? '#ef4444' : aiQuota.dayRemaining <= 3 ? '#f97316' : 'var(--green)' }}>
+                            {aiQuota.dayUsed}/{aiQuota.dayLimit} lượt
+                          </span>
+                        </div>
+                        <div style={{ background: '#e5e7eb', borderRadius: 4, height: 6, overflow: 'hidden' }}>
+                          <div style={{
+                            width: `${Math.min(100, (aiQuota.dayUsed / aiQuota.dayLimit) * 100)}%`,
+                            background: aiQuota.dayRemaining === 0 ? '#ef4444' : aiQuota.dayRemaining <= 3 ? '#f97316' : 'var(--green)',
+                            height: '100%', transition: 'width 0.3s',
+                          }} />
+                        </div>
+                        <div style={{ fontSize: '0.73rem', color: 'var(--gray)', marginTop: 4 }}>
+                          {aiQuota.dayRemaining === 0
+                            ? '⛔ Đã hết quota hôm nay'
+                            : `Còn ${aiQuota.dayRemaining} lượt`
+                          } · {aiQuota.minuteRemaining}/{aiQuota.minuteLimit} lượt/phút
+                        </div>
+                      </div>
+                    )}
+
                     <div className={styles.formGroup}>
                       <label>Yêu cầu cho AI</label>
                       <textarea
                         value={aiPrompt}
                         onChange={e => setAiPrompt(e.target.value)}
-                        placeholder="VD: Tạo câu hỏi về phép nhân ma trận lớp 12, mức độ trung bình..."
+                        placeholder="VĐ: Tạo câu hỏi về phép nhân ma trận lớp 12, mức độ trung bình..."
                         rows={3}
                       />
                     </div>

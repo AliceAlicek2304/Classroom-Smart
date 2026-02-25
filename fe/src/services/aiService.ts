@@ -21,6 +21,15 @@ export interface AIGenerateRequest {
   numQuestions: number
 }
 
+export interface RateLimitStatus {
+  minuteUsed: number
+  minuteLimit: number
+  minuteRemaining: number
+  dayUsed: number
+  dayLimit: number
+  dayRemaining: number
+}
+
 const aiAPI = {
   generateFromText: (data: AIGenerateRequest) =>
     api.post<ApiResponse<GeneratedQuestion[]>>('/ai/generate-questions', data),
@@ -34,6 +43,9 @@ const aiAPI = {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
   },
+
+  getRateLimitStatus: () =>
+    api.get<ApiResponse<RateLimitStatus>>('/ai/rate-limit-status'),
 }
 
 export default aiAPI

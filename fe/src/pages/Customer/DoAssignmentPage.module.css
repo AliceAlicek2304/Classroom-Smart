@@ -89,13 +89,21 @@
 }
 
 /* ── Progress bar ───────────────────────────────────── */
+.progressSticky {
+  position: sticky;
+  top: 68px;
+  z-index: 9;
+  background: var(--bg);
+  padding: 0.5rem 0 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
 .progressBar {
   background: var(--gray-light);
   border: 2px solid var(--dark);
   border-radius: 8px;
   height: 10px;
   overflow: hidden;
-  margin-bottom: 2rem;
 }
 
 .progressFill {

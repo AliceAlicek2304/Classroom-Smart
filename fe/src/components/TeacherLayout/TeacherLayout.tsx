@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts'
 import { useToast } from '../Toast'
+import DeadlinePanel from '../DeadlinePanel/DeadlinePanel'
 import styles from './TeacherLayout.module.css'
 
 interface TeacherLayoutProps {
@@ -71,6 +72,8 @@ const TeacherLayout = ({ children }: TeacherLayoutProps) => {
             <span className={styles.navIcon}>📈</span>
             Bảng điểm
           </Link>
+
+          <DeadlinePanel />
         </nav>
 
         <div className={styles.sidebarFooter}>

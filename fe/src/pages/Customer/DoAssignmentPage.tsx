@@ -205,14 +205,16 @@ const DoAssignmentPage = () => {
         {/* ── Chưa nộp, chưa quá hạn → làm bài ── */}
         {!hasSubmitted && !isOverdue && (
           <>
-            <div className={styles.progressBar}>
-              <div
-                className={styles.progressFill}
-                style={{ width: totalQuestions ? `${(answeredCount / totalQuestions) * 100}%` : '0%' }}
-              />
-            </div>
-            <div className={styles.progressLabel}>
-              {answeredCount}/{totalQuestions} câu đã trả lời
+            <div className={styles.progressSticky}>
+              <div className={styles.progressBar}>
+                <div
+                  className={styles.progressFill}
+                  style={{ width: totalQuestions ? `${(answeredCount / totalQuestions) * 100}%` : '0%' }}
+                />
+              </div>
+              <div className={styles.progressLabel}>
+                {answeredCount}/{totalQuestions} câu đã trả lời
+              </div>
             </div>
 
             {assignment.questions.map((q, idx) => (

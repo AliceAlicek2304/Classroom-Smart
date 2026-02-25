@@ -45,14 +45,14 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className={styles.dashboard}>
         <div className={styles.header}>
-          <h1>Dashboard Overview</h1>
-          <p>Welcome back! Here's what's happening with your platform today.</p>
+          <h1>Tổng quan hệ thống</h1>
+          <p>Xin chào! Đây là tình trạng của nền tảng hôm nay.</p>
         </div>
 
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.purple}`}>📚</div>
-            <div className={styles.statLabel}>Total Subjects</div>
+            <div className={styles.statLabel}>Tổng môn học</div>
             <div className={styles.statValue}>
               {loading ? '…' : animSubjects}
             </div>
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
 
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.blue}`}>📖</div>
-            <div className={styles.statLabel}>Total Textbooks</div>
+            <div className={styles.statLabel}>Tổng sách giáo khoa</div>
             <div className={styles.statValue}>
               {loading ? '…' : animTextbooks}
             </div>
@@ -68,7 +68,7 @@ const AdminDashboard = () => {
 
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.green}`}>🏫</div>
-            <div className={styles.statLabel}>Active Classrooms</div>
+            <div className={styles.statLabel}>Lớp đang hoạt động</div>
             <div className={styles.statValue}>
               {loading ? '…' : animClassrooms}
             </div>
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
 
           <div className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.orange}`}>👨‍🎓</div>
-            <div className={styles.statLabel}>Total Students</div>
+            <div className={styles.statLabel}>Tổng học sinh</div>
             <div className={styles.statValue}>
               {loading ? '…' : animStudents}
             </div>
@@ -86,8 +86,8 @@ const AdminDashboard = () => {
         <div className={styles.contentGrid}>
           <div className={styles.card}>
             <div className={styles.cardHeader}>
-              <h2>Recent Activities</h2>
-              <button className={styles.viewAllBtn}>View All</button>
+              <h2>Hoạt động gần đây</h2>
+              <button className={styles.viewAllBtn}>Xem tất cả</button>
             </div>
             <ul className={styles.activityList}>
               {loading ? (
@@ -115,20 +115,20 @@ const AdminDashboard = () => {
 
           <div className={styles.card}>
             <div className={styles.cardHeader}>
-              <h2>Quick Actions</h2>
+              <h2>Thao tác nhanh</h2>
             </div>
             <div className={styles.quickActions}>
               <Link to="/admin/subjects" className={styles.actionBtn}>
                 <span className={styles.actionIcon}>📚</span>
-                Add New Subject
+                Thêm môn học
               </Link>
               <Link to="/admin/textbooks" className={styles.actionBtn}>
                 <span className={styles.actionIcon}>📖</span>
-                Add New Textbook
+                Thêm sách giáo khoa
               </Link>
               <Link to="/admin/classrooms" className={styles.actionBtn}>
                 <span className={styles.actionIcon}>🏫</span>
-                Create Classroom
+                Tạo lớp học
               </Link>
             </div>
           </div>

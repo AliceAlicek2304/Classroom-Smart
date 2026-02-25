@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
+import { TableSkeleton } from '../../components/Skeleton'
+import { EmptyState } from '../../components/EmptyState'
 import classroomAPI, { type Classroom } from '../../services/classroomService'
 import subjectAPI, { type Subject } from '../../services/subjectService'
 import textbookAPI, { type Textbook } from '../../services/textbookService'
@@ -345,15 +347,21 @@ const CustomerClassroomsPage = () => {
                   {hasFilter && <button className={styles.btnReset} onClick={resetFilters}>✕ Xóa bộ lọc</button>}
                 </div>
                 {loading ? (
-                  <div className={styles.loading}>Đang tải...</div>
+                  <TableSkeleton cols={7} rows={5} />
                 ) : filtered.length === 0 ? (
-                  <div className={styles.empty}>
-                    {activeTab === 'mine' ? (
-                      <><h3>Chưa có lớp nào</h3><p>{hasFilter ? 'Không có lớp nào khớp với bộ lọc.' : 'Bạn chưa tham gia lớp học nào. Vào "Tất cả các lớp" để đăng ký.'}</p></>
-                    ) : (
-                      <><h3>Không tìm thấy lớp học</h3><p>Thử thay đổi bộ lọc để xem thêm lớp học.</p></>
-                    )}
-                  </div>
+                  activeTab === 'mine' ? (
+                    <EmptyState
+                      icon="🏫"
+                      title="Chưa có lớp nào"
+                      message={hasFilter ? 'Không có lớp nào khớp với bộ lọc.' : 'Bạn chưa tham gia lớp học nào. Vào “Tất cả các lớp” để đăng ký.'}
+                    />
+                  ) : (
+                    <EmptyState
+                      icon="🔍"
+                      title="Không tìm thấy lớp học"
+                      message="Thử thay đổi bộ lọc để xem thêm lớp học."
+                    />
+                  )
                 ) : (
                   <div className={styles.tableCard}>
                     <table className={styles.table}>
@@ -425,12 +433,13 @@ const CustomerClassroomsPage = () => {
                       </div>
                     </div>
                     {chaptersLoading ? (
-                      <div className={styles.loading}>Đang tải chương...</div>
+                      <TableSkeleton cols={2} rows={4} />
                     ) : chapters.length === 0 ? (
-                      <div className={styles.empty}>
-                        <h3>Chưa có chương nào</h3>
-                        <p>Sách này chưa có chương nào được cập nhật.</p>
-                      </div>
+                      <EmptyState
+                        icon="📄"
+                        title="Chưa có chương nào"
+                        message="Sách này chưa có chương nào được cập nhật."
+                      />
                     ) : (
                       <div className={styles.accordion}>
                         {chapters.map(ch => {
@@ -493,12 +502,13 @@ const CustomerClassroomsPage = () => {
                       {hasDocFilter && <button className={styles.btnReset} onClick={resetFilters}>✕ Xóa bộ lọc</button>}
                     </div>
                     {docsLoading ? (
-                      <div className={styles.loading}>Đang tải...</div>
+                      <TableSkeleton cols={6} rows={4} />
                     ) : filteredDocs.length === 0 ? (
-                      <div className={styles.empty}>
-                        <h3>Không có tài liệu</h3>
-                        <p>{hasDocFilter ? 'Không có sách nào khớp với bộ lọc.' : 'Chưa có sách giáo khoa nào.'}</p>
-                      </div>
+                      <EmptyState
+                        icon="📚"
+                        title="Không có tài liệu"
+                        message={hasDocFilter ? 'Không có sách nào khớp với bộ lọc.' : 'Chưa có sách giáo khoa nào.'}
+                      />
                     ) : (
                       <div className={styles.tableCard}>
                         <table className={styles.table}>
@@ -537,12 +547,13 @@ const CustomerClassroomsPage = () => {
             {activeTab === 'grades' && (
               <div>
                 {myLoading ? (
-                  <div className={styles.loading}>Đang tải danh sách lớp...</div>
+                  <TableSkeleton cols={3} rows={3} />
                 ) : myClassrooms.filter(c => c.isActive).length === 0 ? (
-                  <div className={styles.empty}>
-                    <h3>Chưa tham gia lớp học nào</h3>
-                    <p>Đăng ký lớp học để xem bảng điểm.</p>
-                  </div>
+                  <EmptyState
+                    icon="🏫"
+                    title="Chưa tham gia lớp học nào"
+                    message="Đăng ký lớp học để xem bảng điểm."
+                  />
                 ) : (
                   <>
                     <div className={styles.filterBar} style={{ marginBottom: 20 }}>
@@ -560,11 +571,15 @@ const CustomerClassroomsPage = () => {
                     </div>
 
                     {!gradesClassroomId && (
-                      <div className={styles.empty}><p>Chọn một lớp học để xem bảng điểm của bạn.</p></div>
+                      <EmptyState
+                        icon="📋"
+                        title="Chọn lớp để xem bảng điểm"
+                        message="Chọn một lớp học ở trên để xem bảng điểm của bạn."
+                      />
                     )}
 
                     {gradesClassroomId && gradesLoading && (
-                      <div className={styles.loading}>Đang tải bảng điểm...</div>
+                      <TableSkeleton cols={3} rows={4} />
                     )}
 
                     {gradesClassroomId && !gradesLoading && gradeBook && (
@@ -617,12 +632,13 @@ const CustomerClassroomsPage = () => {
             {activeTab === 'assignments' && (
               <div>
                 {myLoading ? (
-                  <div className={styles.loading}>Đang tải danh sách lớp...</div>
+                  <TableSkeleton cols={3} rows={3} />
                 ) : myClassrooms.filter(c => c.isActive).length === 0 ? (
-                  <div className={styles.empty}>
-                    <h3>Chưa tham gia lớp học nào</h3>
-                    <p>Đăng ký lớp học để xem bài tập và kiểm tra.</p>
-                  </div>
+                  <EmptyState
+                    icon="📝"
+                    title="Chưa tham gia lớp học nào"
+                    message="Đăng ký lớp học để xem bài tập và kiểm tra."
+                  />
                 ) : (
                   <>
                     <div className={styles.filterBar} style={{ marginBottom: 20 }}>
@@ -640,13 +656,15 @@ const CustomerClassroomsPage = () => {
                     </div>
 
                     {!selectedClassroomId && (
-                      <div className={styles.empty}>
-                        <p>Chọn một lớp học để xem bài tập và bài kiểm tra.</p>
-                      </div>
+                      <EmptyState
+                        icon="📚"
+                        title="Chọn lớp để xem bài"
+                        message="Chọn một lớp học ở trên để xem bài tập và bài kiểm tra."
+                      />
                     )}
 
                     {selectedClassroomId && assignmentsLoading && (
-                      <div className={styles.loading}>Đang tải...</div>
+                      <TableSkeleton cols={4} rows={4} />
                     )}
 
                     {selectedClassroomId && !assignmentsLoading && (
