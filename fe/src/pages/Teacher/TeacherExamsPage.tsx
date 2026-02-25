@@ -4,6 +4,7 @@ import examAPI, {
   type ExamResponse,
   type ExamRequest,
   type QuestionRequest,
+  type ExamSubmissionResponse,
 } from '../../services/examService'
 import classroomAPI, { type Classroom } from '../../services/classroomService'
 import aiAPI from '../../services/aiService'
@@ -27,6 +28,21 @@ const TeacherExamsPage = () => {
   const [showModal, setShowModal] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+
+  const [showSubmissionsModal, setShowSubmissionsModal] = useState(false)
+  const [submissionsExam, setSubmissionsExam] = useState<ExamResponse | null>(null)
+  const [allSubmissions, setAllSubmissions] = useState<ExamSubmissionResponse[]>([])
+  const [submissionsLoading, setSubmissionsLoading] = useState(false)
+  const [filterSubClassroom, setFilterSubClassroom] = useState('')
+  const [filterSubGrade, setFilterSubGrade] = useState('')
+  const [filterSubSearch, setFilterSubSearch] = useState('')
+
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [detailSubmission, setDetailSubmission] = useState<ExamSubmissionResponse | null>(null)
+
+  const [filterExamClassroom, setFilterExamClassroom] = useState('')
+  const [filterExamGrade, setFilterExamGrade] = useState('')
+
   const toast = useToast()
   const { confirm, ConfirmDialog } = useConfirm()
 
@@ -214,6 +230,24 @@ const TeacherExamsPage = () => {
     }
   }
 
+  const handleViewSubmissions = async (e: ExamResponse) => {
+    setSubmissionsExam(e)
+    setAllSubmissions([])
+    setFilterSubClassroom('')
+    setFilterSubGrade('')
+    setFilterSubSearch('')
+    setShowSubmissionsModal(true)
+    setSubmissionsLoading(true)
+    try {
+      const res = await examAPI.getAllSubmissions(e.id)
+      setAllSubmissions(res.data.data || [])
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Lỗi khi tải bài nộp')
+    } finally {
+      setSubmissionsLoading(false)
+    }
+  }
+
   const addQuestion = () =>
     setFormData(f => ({ ...f, questions: [...f.questions, EMPTY_QUESTION()] }))
 
@@ -234,9 +268,23 @@ const TeacherExamsPage = () => {
         : [...f.classroomIds, id],
     }))
 
-  const filtered = exams.filter(e =>
-    !searchTerm.trim() || e.title.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const classroomGradeMap = new Map(classrooms.map(c => [c.name, String(c.gradeLevel)]))
+
+  const filtered = exams.filter(e => {
+    if (searchTerm.trim() && !e.title.toLowerCase().includes(searchTerm.toLowerCase())) return false
+    if (filterExamClassroom && !e.classroomNames?.includes(filterExamClassroom)) return false
+    if (filterExamGrade) {
+      const hasGrade = (e.classroomIds || []).some(id => {
+        const cr = classrooms.find(c => c.id === id)
+        return cr && String(cr.gradeLevel) === filterExamGrade
+      })
+      if (!hasGrade) return false
+    }
+    return true
+  })
+
+  const examGrades = [...new Set(classrooms.map(c => String(c.gradeLevel)))].sort((a, b) => Number(a) - Number(b))
+  const examClassroomOptions = [...new Set(exams.flatMap(e => e.classroomNames || []))].sort()
 
   return (
     <TeacherLayout>
@@ -251,13 +299,36 @@ const TeacherExamsPage = () => {
           </button>
         </div>
 
-        <div className={styles.searchBox}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
           <input
             type="text"
-            placeholder="Tìm kiếm bài kiểm tra..."
+            placeholder="🔍 Tìm theo tiêu đề..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
+            style={{ padding: '0.5rem 0.85rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', flex: 1, minWidth: 180, fontFamily: 'inherit' }}
           />
+          <select
+            value={filterExamGrade}
+            onChange={e => setFilterExamGrade(e.target.value)}
+            style={{ padding: '0.5rem 0.85rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', minWidth: 120, fontFamily: 'inherit' }}
+          >
+            <option value="">Tất cả khối</option>
+            {examGrades.map(g => <option key={g} value={g}>Khối {g}</option>)}
+          </select>
+          <select
+            value={filterExamClassroom}
+            onChange={e => setFilterExamClassroom(e.target.value)}
+            style={{ padding: '0.5rem 0.85rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', minWidth: 160, fontFamily: 'inherit' }}
+          >
+            <option value="">Tất cả lớp</option>
+            {examClassroomOptions.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          {(searchTerm || filterExamGrade || filterExamClassroom) && (
+            <button
+              onClick={() => { setSearchTerm(''); setFilterExamGrade(''); setFilterExamClassroom('') }}
+              style={{ padding: '0.5rem 0.85rem', border: '2px solid var(--dark)', borderRadius: 8, background: '#FEE2E2', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap' }}
+            >✕ Xóa lọc</button>
+          )}
         </div>
 
         {loading ? (
@@ -297,6 +368,11 @@ const TeacherExamsPage = () => {
                       </span>
                     </td>
                     <td className={styles.actions}>
+                      <button
+                        style={{ padding: '0.3rem 0.55rem', border: '2px solid var(--dark)', borderRadius: 8, background: '#DBEAFE', cursor: 'pointer', fontSize: '1rem', boxShadow: '2px 2px 0 var(--dark)', marginRight: 2 }}
+                        onClick={() => handleViewSubmissions(e)}
+                        title="Xem bài nộp"
+                      >👥</button>
                       <button className={styles.btnEdit} onClick={() => handleEdit(e)} title="Chỉnh sửa">✏️</button>
                       <button
                         className={e.isActive ? styles.btnToggleOff : styles.btnToggleOn}
@@ -612,6 +688,218 @@ const TeacherExamsPage = () => {
       )}
 
       <ConfirmDialog />
+
+      {/* Submissions Modal */}
+      {showSubmissionsModal && submissionsExam && (() => {
+        const classroomOptions = [...new Set(allSubmissions.map(s => s.classroomName || ''))].filter(c => c && c !== '—').sort()
+        const gradeOptions = [...new Set(
+          classroomOptions.map(c => classroomGradeMap.get(c)).filter(Boolean) as string[]
+        )].sort((a, b) => Number(a) - Number(b))
+
+        const filteredSubs = allSubmissions.filter(s => {
+          if (filterSubClassroom && s.classroomName !== filterSubClassroom) return false
+          if (filterSubGrade) {
+            const grade = classroomGradeMap.get(s.classroomName || '')
+            if (grade !== filterSubGrade) return false
+          }
+          if (filterSubSearch && !s.studentName.toLowerCase().includes(filterSubSearch.toLowerCase())) return false
+          return true
+        })
+
+        return (
+          <div className={styles.modalOverlay} onClick={() => setShowSubmissionsModal(false)}>
+            <div
+              className={styles.modal}
+              style={{ maxWidth: 900, width: '95vw', maxHeight: '90vh', overflowY: 'auto' }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className={styles.modalHeader}>
+                <h2>👥 Bài nộp: {submissionsExam.title}</h2>
+                <button className={styles.modalClose} onClick={() => setShowSubmissionsModal(false)}>✕</button>
+              </div>
+
+              <div style={{ padding: '1rem 1.5rem 0', display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="🔍 Tìm học sinh..."
+                  value={filterSubSearch}
+                  onChange={e => setFilterSubSearch(e.target.value)}
+                  style={{ padding: '0.45rem 0.8rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', flex: 1, minWidth: 160, fontFamily: 'inherit' }}
+                />
+                <select
+                  value={filterSubGrade}
+                  onChange={e => { setFilterSubGrade(e.target.value); setFilterSubClassroom('') }}
+                  style={{ padding: '0.45rem 0.8rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', minWidth: 120, fontFamily: 'inherit' }}
+                >
+                  <option value="">Tất cả khối</option>
+                  {gradeOptions.map(g => <option key={g} value={g}>Khối {g}</option>)}
+                </select>
+                <select
+                  value={filterSubClassroom}
+                  onChange={e => setFilterSubClassroom(e.target.value)}
+                  style={{ padding: '0.45rem 0.8rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', minWidth: 150, fontFamily: 'inherit' }}
+                >
+                  <option value="">Tất cả lớp</option>
+                  {(filterSubGrade
+                    ? classroomOptions.filter(c => classroomGradeMap.get(c) === filterSubGrade)
+                    : classroomOptions
+                  ).map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                {(filterSubSearch || filterSubGrade || filterSubClassroom) && (
+                  <button
+                    onClick={() => { setFilterSubSearch(''); setFilterSubGrade(''); setFilterSubClassroom('') }}
+                    style={{ padding: '0.45rem 0.8rem', border: '2px solid var(--dark)', borderRadius: 8, background: '#FEE2E2', cursor: 'pointer', fontWeight: 600, fontSize: '0.82rem' }}
+                  >✕</button>
+                )}
+                <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--dark)', opacity: 0.65, marginLeft: 'auto' }}>
+                  {filteredSubs.length} / {allSubmissions.length} bài nộp
+                </span>
+              </div>
+
+              <div style={{ padding: '0.75rem 1.5rem', display: 'flex', gap: 16 }}>
+                <div style={{ padding: '0.5rem 1rem', background: '#DBEAFE', border: '2px solid var(--dark)', borderRadius: 8, fontWeight: 700, fontSize: '0.85rem' }}>
+                  Tổng nộp: {allSubmissions.length}
+                </div>
+                {allSubmissions.length > 0 && (
+                  <div style={{ padding: '0.5rem 1rem', background: '#DCFCE7', border: '2px solid var(--dark)', borderRadius: 8, fontWeight: 700, fontSize: '0.85rem' }}>
+                    Điểm TB: {(allSubmissions.reduce((sum, s) => sum + s.score, 0) / allSubmissions.length).toFixed(1)}
+                  </div>
+                )}
+              </div>
+
+              {submissionsLoading ? (
+                <div className={styles.loading} style={{ padding: '2rem' }}>Đang tải...</div>
+              ) : filteredSubs.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem', opacity: 0.5 }}>
+                  {allSubmissions.length === 0 ? 'Chưa có học sinh nào nộp bài.' : 'Không có kết quả khớp bộ lọc.'}
+                </div>
+              ) : (
+                <div className={styles.tableWrapper} style={{ margin: '0 1.5rem 1.5rem' }}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th style={{ width: 40 }}>STT</th>
+                        <th>Học sinh</th>
+                        <th>Lớp</th>
+                        <th style={{ width: 100 }}>Điểm</th>
+                        <th style={{ width: 110 }}>Số đúng</th>
+                        <th>Thời gian nộp</th>
+                        <th style={{ width: 90 }}>Chi tiết</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredSubs.map((s, idx) => (
+                        <tr key={s.id}>
+                          <td style={{ textAlign: 'center', opacity: 0.6, fontSize: '0.82rem' }}>{idx + 1}</td>
+                          <td style={{ fontWeight: 600 }}>{s.studentName}</td>
+                          <td style={{ fontSize: '0.85rem' }}>{s.classroomName || '—'}</td>
+                          <td>
+                            <span style={{
+                              padding: '0.2rem 0.6rem',
+                              borderRadius: 6,
+                              border: '2px solid var(--dark)',
+                              fontWeight: 700,
+                              background: s.score >= 8 ? '#DCFCE7' : s.score >= 5 ? '#FEF9C3' : '#FEE2E2',
+                              fontSize: '0.9rem',
+                            }}>{s.score.toFixed(1)}</span>
+                          </td>
+                          <td style={{ fontSize: '0.85rem' }}>{s.correctCount}/{s.totalCount} câu</td>
+                          <td style={{ fontSize: '0.82rem', opacity: 0.7 }}>
+                            {new Date(s.submittedAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                          <td>
+                            <button
+                              style={{ padding: '0.3rem 0.7rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem', boxShadow: '2px 2px 0 var(--dark)' }}
+                              onClick={() => { setDetailSubmission(s); setShowDetailModal(true) }}
+                            >📌 Xem</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* Detail Modal */}
+      {showDetailModal && detailSubmission && (
+        <div className={styles.modalOverlay} style={{ zIndex: 10001 }} onClick={() => setShowDetailModal(false)}>
+          <div
+            className={styles.modal}
+            style={{ maxWidth: 700, width: '95vw', maxHeight: '90vh', overflowY: 'auto' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <div>
+                <h2 style={{ margin: 0 }}>📋 Bài làm của {detailSubmission.studentName}</h2>
+                <div style={{ fontSize: '0.85rem', opacity: 0.7, marginTop: 2 }}>{detailSubmission.examTitle}</div>
+              </div>
+              <button className={styles.modalClose} onClick={() => setShowDetailModal(false)}>✕</button>
+            </div>
+
+            <div style={{
+              padding: '0.75rem 1.5rem',
+              display: 'flex', gap: 16, alignItems: 'center',
+              borderBottom: '2px solid var(--dark)',
+              background: detailSubmission.score >= 8 ? '#DCFCE7' : detailSubmission.score >= 5 ? '#FEF9C3' : '#FEE2E2',
+            }}>
+              <span style={{ fontWeight: 800, fontSize: '1.5rem' }}>{detailSubmission.score.toFixed(1)}</span>
+              <span style={{ fontWeight: 600 }}>{detailSubmission.correctCount}/{detailSubmission.totalCount} câu đúng</span>
+              <span style={{ fontSize: '0.82rem', opacity: 0.7, marginLeft: 'auto' }}>
+                Nộp lúc: {new Date(detailSubmission.submittedAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+
+            <div style={{ padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {detailSubmission.answers.map((ans, qi) => {
+                const question = submissionsExam?.questions.find(q => q.id === ans.questionId)
+                const opts: Record<string, string> = {
+                  A: question?.optionA ?? 'A',
+                  B: question?.optionB ?? 'B',
+                  C: question?.optionC ?? 'C',
+                  D: question?.optionD ?? 'D',
+                }
+                return (
+                  <div key={ans.questionId} style={{
+                    border: `2px solid ${ans.isCorrect ? '#16A34A' : '#DC2626'}`,
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                    boxShadow: `4px 4px 0 ${ans.isCorrect ? '#16A34A' : '#DC2626'}`,
+                  }}>
+                    <div style={{ padding: '0.6rem 1rem', background: ans.isCorrect ? '#DCFCE7' : '#FEE2E2', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ opacity: 0.6, fontWeight: 400, fontSize: '0.85rem' }}>Câu {qi + 1}</span>
+                      <span>{ans.questionContent}</span>
+                      <span style={{ marginLeft: 'auto' }}>{ans.isCorrect ? '✅' : '❌'}</span>
+                    </div>
+                    <div style={{ padding: '0.75rem 1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                      {(['A', 'B', 'C', 'D'] as const).map(opt => {
+                        const isCorrect = opt === ans.correctAnswer
+                        const isSelected = opt === ans.selectedAnswer
+                        const bg = isCorrect ? '#DCFCE7' : isSelected && !isCorrect ? '#FEE2E2' : 'var(--bg)'
+                        const border = isCorrect ? '2px solid #16A34A' : isSelected ? '2px solid #DC2626' : '2px solid #ccc'
+                        return (
+                          <div key={opt} style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border, background: bg, display: 'flex', gap: 8, alignItems: 'center', fontSize: '0.88rem' }}>
+                            <span style={{ fontWeight: 700, minWidth: 20, opacity: 0.7 }}>{opt}.</span>
+                            <span>{opts[opt]}</span>
+                            {isCorrect && <span style={{ marginLeft: 'auto', color: '#16A34A', fontWeight: 700 }}>✓</span>}
+                            {isSelected && !isCorrect && <span style={{ marginLeft: 'auto', color: '#DC2626', fontWeight: 700 }}>✗</span>}
+                          </div>
+                        )
+                      })}
+                    </div>
+                    {!ans.selectedAnswer && (
+                      <div style={{ padding: '0.3rem 1rem 0.7rem', fontSize: '0.82rem', color: '#DC2626', fontWeight: 600 }}>⚠️ Không chọn đáp án</div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </TeacherLayout>
   )
 }
