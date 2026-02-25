@@ -1,8 +1,8 @@
-# Project Documentation
+# Project Documentation (internal, not for repo)
 CONTINUITY.md
 API_TESTING_GUIDE.md
 TESTING.md
-*.md
+fe/README.md
 
 # Backend - Spring Boot
 be/target/
