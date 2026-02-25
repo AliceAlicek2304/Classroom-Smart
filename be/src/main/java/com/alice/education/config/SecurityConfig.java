@@ -100,6 +100,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/classrooms/**").authenticated()
                         .requestMatchers("/api/assignments/**").authenticated()
                         .requestMatchers("/api/exams/**").authenticated()
+                        .requestMatchers("/api/grades/**").authenticated()
                         .requestMatchers("/chapter/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/img/avatar/**").permitAll()

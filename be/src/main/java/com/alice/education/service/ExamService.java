@@ -48,7 +48,8 @@ public class ExamService {
         Exam exam = new Exam();
         exam.setTitle(request.getTitle());
         exam.setDescription(request.getDescription());
-        exam.setDuration(request.getDuration());
+        exam.setExamType(request.getExamType());
+        exam.setDuration(resolveDuration(request.getExamType(), request.getDuration()));
         if (request.getDueDate() != null && !request.getDueDate().isBlank()) {
             exam.setDueDate(LocalDateTime.parse(request.getDueDate()));
         }
@@ -126,7 +127,8 @@ public class ExamService {
 
         exam.setTitle(request.getTitle());
         exam.setDescription(request.getDescription());
-        exam.setDuration(request.getDuration());
+        exam.setExamType(request.getExamType());
+        exam.setDuration(resolveDuration(request.getExamType(), request.getDuration()));
         if (request.getDueDate() != null && !request.getDueDate().isBlank()) {
             exam.setDueDate(LocalDateTime.parse(request.getDueDate()));
         }
@@ -175,6 +177,16 @@ public class ExamService {
         return mapToResponse(examRepository.save(exam));
     }
 
+    private int resolveDuration(com.alice.education.model.GradeType type, Integer fallback) {
+        if (type == null) return fallback != null ? fallback : 45;
+        return switch (type) {
+            case QUIZ_15 -> 15;
+            case TEST_45 -> 45;
+            case MIDTERM -> 90;
+            case FINAL -> 120;
+        };
+    }
+
     private ExamResponse mapToResponse(Exam e) {
         return mapToResponse(e, true);
     }
@@ -186,6 +198,7 @@ public class ExamService {
         res.setDescription(e.getDescription());
         res.setDueDate(e.getDueDate());
         res.setDuration(e.getDuration());
+        res.setExamType(e.getExamType());
         res.setIsActive(e.getIsActive());
         res.setCreatedAt(e.getCreatedAt());
         res.setUpdatedAt(e.getUpdatedAt());

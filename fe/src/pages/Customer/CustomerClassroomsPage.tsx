@@ -8,11 +8,12 @@ import textbookAPI, { type Textbook } from '../../services/textbookService'
 import chapterAPI, { type Chapter } from '../../services/chapterService'
 import assignmentAPI, { type AssignmentResponse } from '../../services/assignmentService'
 import examAPI, { type ExamResponse } from '../../services/examService'
+import gradeAPI, { type GradeBookResponse, GRADE_TYPE_LABELS, GRADE_TYPE_COLORS } from '../../services/gradeService'
 import { useToast } from '../../components/Toast'
 import profile from '../Common/ProfilePage.module.css'
 import styles from '../Admin/Admin.module.css'
 
-type TabType = 'mine' | 'all' | 'docs' | 'assignments'
+type TabType = 'mine' | 'all' | 'docs' | 'assignments' | 'grades'
 
 const CustomerClassroomsPage = () => {
   const location = useLocation()
@@ -23,6 +24,7 @@ const CustomerClassroomsPage = () => {
     if (location.pathname === '/customer/classrooms') return 'all'
     if (location.pathname === '/customer/docs') return 'docs'
     if (location.pathname === '/customer/assignments') return 'assignments'
+    if (location.pathname === '/customer/grades') return 'grades'
     return 'mine'
   }
 
@@ -54,6 +56,11 @@ const CustomerClassroomsPage = () => {
   const [exams, setExams] = useState<ExamResponse[]>([])
   const [assignmentsLoading, setAssignmentsLoading] = useState(false)
 
+  // Grades tab state
+  const [gradesClassroomId, setGradesClassroomId] = useState<number | null>(null)
+  const [gradeBook, setGradeBook] = useState<GradeBookResponse | null>(null)
+  const [gradesLoading, setGradesLoading] = useState(false)
+
   const toggleChapter = (id: number) => {
     setExpandedChapters(prev => {
       const next = new Set(prev)
@@ -83,6 +90,7 @@ const CustomerClassroomsPage = () => {
     else if (activeTab === 'all') { fetchAll(); fetchMine() }
     else if (activeTab === 'docs') fetchDocs()
     else if (activeTab === 'assignments') fetchMine()
+    else if (activeTab === 'grades') { fetchMine(); setGradesClassroomId(null); setGradeBook(null) }
   }, [activeTab])
 
   const resetFilters = () => {
@@ -163,7 +171,30 @@ const CustomerClassroomsPage = () => {
     if (tab === 'mine') navigate('/customer/my-classrooms')
     else if (tab === 'all') navigate('/customer/classrooms')
     else if (tab === 'docs') navigate('/customer/docs')
-    else navigate('/customer/assignments')
+    else if (tab === 'assignments') navigate('/customer/assignments')
+    else navigate('/customer/grades')
+  }
+
+  const fetchGradesForClassroom = async (classroomId: number) => {
+    setGradesClassroomId(classroomId)
+    setGradesLoading(true)
+    setGradeBook(null)
+    try {
+      const res = await gradeAPI.getMyGradeBook(classroomId)
+      setGradeBook(res.data.data)
+    } catch (error: unknown) {
+      const e = error as { response?: { data?: { message?: string } } }
+      toast.error(e.response?.data?.message || 'Lỗi khi tải bảng điểm')
+    } finally {
+      setGradesLoading(false)
+    }
+  }
+
+  const getScoreColor = (score: number | null | undefined) => {
+    if (score === null || score === undefined) return '#aaa'
+    if (score >= 8) return '#22c55e'
+    if (score >= 5) return '#f59e0b'
+    return '#ef4444'
   }
 
   const fetchAssignmentsForClassroom = async (classroomId: number) => {
@@ -269,6 +300,13 @@ const CustomerClassroomsPage = () => {
               <span className={profile.navIcon}>📝</span>
               Bài tập &amp; Kiểm tra
             </div>
+            <div
+              className={`${profile.navItem} ${activeTab === 'grades' ? profile.navItemActive : ''}`}
+              onClick={() => handleTabChange('grades')}
+            >
+              <span className={profile.navIcon}>📈</span>
+              Bảng điểm
+            </div>
           </nav>
         </aside>
 
@@ -281,10 +319,11 @@ const CustomerClassroomsPage = () => {
               {activeTab === 'docs' && !selectedTextbook && <><h2>📖 Tài liệu</h2><p>Sách giáo khoa đang hoạt động</p></>}
               {activeTab === 'docs' && selectedTextbook && <><h2>📑 Danh sách chương</h2><p>{selectedTextbook.title}</p></>}
               {activeTab === 'assignments' && <><h2>📝 Bài tập &amp; Kiểm tra</h2><p>Chọn lớp học để xem bài tập và bài kiểm tra</p></>}
+              {activeTab === 'grades' && <><h2>📈 Bảng điểm</h2><p>Xem điểm số của bạn theo từng lớp học</p></>}
             </div>
 
             {/* Classrooms filters & table */}
-            {activeTab !== 'docs' && activeTab !== 'assignments' && (
+            {activeTab !== 'docs' && activeTab !== 'assignments' && activeTab !== 'grades' && (
               <>
                 <div className={styles.filterBar}>
                   <select value={filterSubject} onChange={e => setFilterSubject(e.target.value)} className={styles.filterSelect}>
@@ -494,6 +533,86 @@ const CustomerClassroomsPage = () => {
                 )}
               </>
             )}
+            {/* Grades tab */}
+            {activeTab === 'grades' && (
+              <div>
+                {myLoading ? (
+                  <div className={styles.loading}>Đang tải danh sách lớp...</div>
+                ) : myClassrooms.filter(c => c.isActive).length === 0 ? (
+                  <div className={styles.empty}>
+                    <h3>Chưa tham gia lớp học nào</h3>
+                    <p>Đăng ký lớp học để xem bảng điểm.</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className={styles.filterBar} style={{ marginBottom: 20 }}>
+                      <select
+                        value={gradesClassroomId ?? ''}
+                        onChange={e => e.target.value ? fetchGradesForClassroom(Number(e.target.value)) : (setGradesClassroomId(null), setGradeBook(null))}
+                        className={styles.filterSelect}
+                        style={{ minWidth: 260 }}
+                      >
+                        <option value="">— Chọn lớp học —</option>
+                        {myClassrooms.filter(c => c.isActive).map(c => (
+                          <option key={c.id} value={c.id}>{c.name} ({c.subjectName})</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {!gradesClassroomId && (
+                      <div className={styles.empty}><p>Chọn một lớp học để xem bảng điểm của bạn.</p></div>
+                    )}
+
+                    {gradesClassroomId && gradesLoading && (
+                      <div className={styles.loading}>Đang tải bảng điểm...</div>
+                    )}
+
+                    {gradesClassroomId && !gradesLoading && gradeBook && (
+                      <div style={{ overflowX: 'auto' }}>
+                        <table className={styles.table} style={{ minWidth: 600 }}>
+                          <thead>
+                            <tr>
+                              <th>Cột điểm</th>
+                              <th>Loại</th>
+                              <th style={{ textAlign: 'center', minWidth: 80 }}>Điểm</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {gradeBook.columns.map((col) => {
+                              const myRow = gradeBook.rows[0]
+                              const entry = myRow?.grades.find(g => g.columnId === col.id)
+                              return (
+                                <tr key={col.id}>
+                                  <td><strong>{col.name}</strong></td>
+                                  <td>
+                                    <span style={{
+                                      display: 'inline-block',
+                                      padding: '0.15rem 0.55rem',
+                                      background: GRADE_TYPE_COLORS[col.type] || '#eee',
+                                      border: '1.5px solid var(--dark)',
+                                      borderRadius: 6,
+                                      fontSize: '0.78rem',
+                                      fontWeight: 700,
+                                    }}>
+                                      {GRADE_TYPE_LABELS[col.type] || col.type}
+                                    </span>
+                                  </td>
+                                  <td style={{ textAlign: 'center', fontWeight: 800, fontSize: '1.1rem', color: getScoreColor(entry?.score) }}>
+                                    {entry?.score !== null && entry?.score !== undefined ? entry.score : <span style={{ color: '#ccc', fontWeight: 400 }}>—</span>}
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                        <p style={{ marginTop: 12, fontSize: '0.82rem', color: '#888' }}>Tổng {gradeBook.columns.length} cột điểm · Lớp: {gradeBook.classroomName}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
             {/* Assignments & Exams tab */}
             {activeTab === 'assignments' && (
               <div>

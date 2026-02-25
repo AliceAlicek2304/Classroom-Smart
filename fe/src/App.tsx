@@ -13,6 +13,7 @@ import TeacherDashboard from './pages/Teacher/TeacherDashboard'
 import TeacherClassroomsPage from './pages/Teacher/TeacherClassroomsPage'
 import TeacherAssignmentsPage from './pages/Teacher/TeacherAssignmentsPage'
 import TeacherExamsPage from './pages/Teacher/TeacherExamsPage'
+import TeacherGradesPage from './pages/Teacher/TeacherGradesPage'
 import CustomerClassroomsPage from './pages/Customer/CustomerClassroomsPage'
 import DoAssignmentPage from './pages/Customer/DoAssignmentPage'
 import DoExamPage from './pages/Customer/DoExamPage'
@@ -74,6 +75,11 @@ function App() {
                 <TeacherExamsPage />
               </ProtectedRoute>
             } />
+            <Route path="/teacher/grades" element={
+              <ProtectedRoute requiredRole="TEACHER">
+                <TeacherGradesPage />
+              </ProtectedRoute>
+            } />
 
             <Route path="/customer/my-classrooms" element={
               <ProtectedRoute requiredRole="CUSTOMER">
@@ -91,6 +97,11 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/customer/assignments" element={
+              <ProtectedRoute requiredRole="CUSTOMER">
+                <CustomerClassroomsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/customer/grades" element={
               <ProtectedRoute requiredRole="CUSTOMER">
                 <CustomerClassroomsPage />
               </ProtectedRoute>

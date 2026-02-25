@@ -64,6 +64,13 @@ const TeacherLayout = ({ children }: TeacherLayoutProps) => {
             <span className={styles.navIcon}>📋</span>
             Bài kiểm tra
           </Link>
+          <Link 
+            to="/teacher/grades" 
+            className={location.pathname === '/teacher/grades' ? styles.navLinkActive : styles.navLink}
+          >
+            <span className={styles.navIcon}>📈</span>
+            Bảng điểm
+          </Link>
         </nav>
 
         <div className={styles.sidebarFooter}>

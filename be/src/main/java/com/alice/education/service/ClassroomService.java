@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,10 @@ public class ClassroomService {
     
     @Autowired
     private ClassStudentRepository classStudentRepository;
+
+    @Lazy
+    @Autowired
+    private GradeService gradeService;
     
     @Transactional
     public ClassroomResponse createClassroom(ClassroomRequest request) {
@@ -64,6 +69,7 @@ public class ClassroomService {
         classroom.setPassword(request.getPassword());
         
         Classroom savedClassroom = classroomRepository.save(classroom);
+        gradeService.initializeGradeColumns(savedClassroom);
         return mapToResponse(savedClassroom);
     }
     
@@ -181,6 +187,7 @@ public class ClassroomService {
         }
         
         ClassStudent saved = classStudentRepository.save(classStudent);
+        gradeService.addStudentToGradeBook(classroom, student);
         return mapToStudentResponse(saved);
     }
     
@@ -252,7 +259,9 @@ public class ClassroomService {
             classStudent.setIsActive(true);
         }
 
-        return mapToStudentResponse(classStudentRepository.save(classStudent));
+        ClassStudent saved = classStudentRepository.save(classStudent);
+        gradeService.addStudentToGradeBook(classroom, student);
+        return mapToStudentResponse(saved);
     }
 
     public List<ClassroomResponse> getEnrolledClassrooms() {

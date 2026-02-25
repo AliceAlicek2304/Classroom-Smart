@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 
 public class ExamRequest {
 
+    private com.alice.education.model.GradeType examType;
+
     @NotBlank(message = "Tiêu đề không được để trống")
     private String title;
 
@@ -42,4 +44,7 @@ public class ExamRequest {
 
     public List<QuestionRequest> getQuestions() { return questions; }
     public void setQuestions(List<QuestionRequest> questions) { this.questions = questions; }
+
+    public com.alice.education.model.GradeType getExamType() { return examType; }
+    public void setExamType(com.alice.education.model.GradeType examType) { this.examType = examType; }
 }

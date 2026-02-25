@@ -12,6 +12,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,6 +44,10 @@ public class Exam {
     @Size(max = 1000)
     @Column(name = "description", length = 1000)
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exam_type", length = 20)
+    private com.alice.education.model.GradeType examType;
 
     // Duration in minutes
     @Column(name = "duration")
@@ -78,6 +84,9 @@ public class Exam {
     private LocalDateTime updatedAt;
 
     public Exam() {}
+
+    public com.alice.education.model.GradeType getExamType() { return examType; }
+    public void setExamType(com.alice.education.model.GradeType examType) { this.examType = examType; }
 
     // Getters & Setters
     public Long getId() { return id; }

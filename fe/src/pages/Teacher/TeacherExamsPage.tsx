@@ -5,6 +5,9 @@ import examAPI, {
   type ExamRequest,
   type QuestionRequest,
   type ExamSubmissionResponse,
+  EXAM_TYPE_OPTIONS,
+  EXAM_TYPE_LABELS,
+  EXAM_TYPE_COLORS,
 } from '../../services/examService'
 import classroomAPI, { type Classroom } from '../../services/classroomService'
 import aiAPI from '../../services/aiService'
@@ -42,6 +45,7 @@ const TeacherExamsPage = () => {
 
   const [filterExamClassroom, setFilterExamClassroom] = useState('')
   const [filterExamGrade, setFilterExamGrade] = useState('')
+  const [filterExamType, setFilterExamType] = useState('')
 
   const toast = useToast()
   const { confirm, ConfirmDialog } = useConfirm()
@@ -58,7 +62,8 @@ const TeacherExamsPage = () => {
     title: '',
     description: '',
     dueDate: '',
-    duration: 45,
+    duration: 15,
+    examType: 'QUIZ_15',
     classroomIds: [],
     questions: [EMPTY_QUESTION()],
   })
@@ -89,7 +94,8 @@ const TeacherExamsPage = () => {
       title: '',
       description: '',
       dueDate: '',
-      duration: 45,
+      duration: 15,
+      examType: 'QUIZ_15',
       classroomIds: [],
       questions: [EMPTY_QUESTION()],
     })
@@ -107,6 +113,7 @@ const TeacherExamsPage = () => {
       description: e.description || '',
       dueDate: e.dueDate ? e.dueDate.slice(0, 16) : '',
       duration: e.duration,
+      examType: e.examType || 'QUIZ_15',
       classroomIds: e.classroomIds || [],
       questions: e.questions.length > 0
         ? e.questions.map(q => ({
@@ -175,8 +182,8 @@ const TeacherExamsPage = () => {
       toast.error('Vui lòng nhập tiêu đề!')
       return
     }
-    if (!formData.duration || formData.duration < 1) {
-      toast.error('Thời gian làm bài phải lớn hơn 0!')
+    if (!formData.examType) {
+      toast.error('Vui lòng chọn loại bài kiểm tra!')
       return
     }
     if (formData.questions.some(q => !q.content.trim())) {
@@ -273,6 +280,7 @@ const TeacherExamsPage = () => {
   const filtered = exams.filter(e => {
     if (searchTerm.trim() && !e.title.toLowerCase().includes(searchTerm.toLowerCase())) return false
     if (filterExamClassroom && !e.classroomNames?.includes(filterExamClassroom)) return false
+    if (filterExamType && e.examType !== filterExamType) return false
     if (filterExamGrade) {
       const hasGrade = (e.classroomIds || []).some(id => {
         const cr = classrooms.find(c => c.id === id)
@@ -316,6 +324,16 @@ const TeacherExamsPage = () => {
             {examGrades.map(g => <option key={g} value={g}>Khối {g}</option>)}
           </select>
           <select
+            value={filterExamType}
+            onChange={e => setFilterExamType(e.target.value)}
+            style={{ padding: '0.5rem 0.85rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', minWidth: 140, fontFamily: 'inherit' }}
+          >
+            <option value="">Tất cả loại</option>
+            {EXAM_TYPE_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          <select
             value={filterExamClassroom}
             onChange={e => setFilterExamClassroom(e.target.value)}
             style={{ padding: '0.5rem 0.85rem', border: '2px solid var(--dark)', borderRadius: 8, background: 'var(--bg)', minWidth: 160, fontFamily: 'inherit' }}
@@ -323,9 +341,9 @@ const TeacherExamsPage = () => {
             <option value="">Tất cả lớp</option>
             {examClassroomOptions.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          {(searchTerm || filterExamGrade || filterExamClassroom) && (
+          {(searchTerm || filterExamGrade || filterExamClassroom || filterExamType) && (
             <button
-              onClick={() => { setSearchTerm(''); setFilterExamGrade(''); setFilterExamClassroom('') }}
+              onClick={() => { setSearchTerm(''); setFilterExamGrade(''); setFilterExamClassroom(''); setFilterExamType('') }}
               style={{ padding: '0.5rem 0.85rem', border: '2px solid var(--dark)', borderRadius: 8, background: '#FEE2E2', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap' }}
             >✕ Xóa lọc</button>
           )}
@@ -340,7 +358,7 @@ const TeacherExamsPage = () => {
                 <tr>
                   <th>Tiêu đề</th>
                   <th>Số câu</th>
-                  <th>Thời gian</th>
+                  <th>Loại</th>
                   <th>Hạn thi</th>
                   <th>Lớp học</th>
                   <th>Trạng thái</th>
@@ -359,7 +377,25 @@ const TeacherExamsPage = () => {
                       )}
                     </td>
                     <td>{e.totalQuestions} câu</td>
-                    <td>{e.duration} phút</td>
+                    <td>
+                      {e.examType ? (
+                        <span style={{
+                          display: 'inline-block',
+                          padding: '2px 10px',
+                          borderRadius: 6,
+                          border: `2px solid ${EXAM_TYPE_COLORS[e.examType] || 'var(--dark)'}`,
+                          background: (EXAM_TYPE_COLORS[e.examType] || '#ccc') + '22',
+                          color: EXAM_TYPE_COLORS[e.examType] || 'var(--dark)',
+                          fontWeight: 700,
+                          fontSize: '0.82rem',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {EXAM_TYPE_LABELS[e.examType] || e.examType}
+                        </span>
+                      ) : (
+                        <span style={{ opacity: 0.5 }}>{e.duration} phút</span>
+                      )}
+                    </td>
                     <td>{e.dueDate ? new Date(e.dueDate).toLocaleDateString('vi-VN') : '—'}</td>
                     <td>{e.classroomNames?.join(', ') || '—'}</td>
                     <td>
@@ -432,14 +468,37 @@ const TeacherExamsPage = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className={styles.formGroup}>
-                  <label>Thời gian làm bài (phút) *</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={formData.duration}
-                    onChange={e => setFormData(f => ({ ...f, duration: Number(e.target.value) }))}
-                    required
-                  />
+                  <label>Loại bài kiểm tra *</label>
+                  <select
+                    value={formData.examType || 'QUIZ_15'}
+                    onChange={e => {
+                      const opt = EXAM_TYPE_OPTIONS.find(o => o.value === e.target.value)
+                      setFormData(f => ({
+                        ...f,
+                        examType: e.target.value,
+                        duration: opt ? opt.duration : f.duration,
+                      }))
+                    }}
+                    style={{
+                      border: '2px solid var(--dark)',
+                      borderRadius: 8,
+                      padding: '0.5rem 0.75rem',
+                      fontFamily: 'var(--font)',
+                      fontWeight: 600,
+                      fontSize: '0.95rem',
+                      background: 'var(--bg)',
+                      boxShadow: '3px 3px 0 var(--dark)',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      width: '100%',
+                    }}
+                  >
+                    {EXAM_TYPE_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label} ({opt.duration} phút)
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className={styles.formGroup}>
                   <label>Hạn thi</label>

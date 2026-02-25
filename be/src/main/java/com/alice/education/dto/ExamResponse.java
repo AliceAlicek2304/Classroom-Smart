@@ -10,6 +10,7 @@ public class ExamResponse {
     private String description;
     private LocalDateTime dueDate;
     private Integer duration;
+    private com.alice.education.model.GradeType examType;
     private Boolean isActive;
     private Long teacherId;
     private String teacherName;
@@ -67,4 +68,7 @@ public class ExamResponse {
 
     public Boolean getHasSubmitted() { return hasSubmitted; }
     public void setHasSubmitted(Boolean hasSubmitted) { this.hasSubmitted = hasSubmitted; }
+
+    public com.alice.education.model.GradeType getExamType() { return examType; }
+    public void setExamType(com.alice.education.model.GradeType examType) { this.examType = examType; }
 }

@@ -23,6 +23,7 @@ export interface ExamResponse {
   description: string
   dueDate: string | null
   duration: number
+  examType: string | null
   isActive: boolean
   teacherId: number
   teacherName: string
@@ -77,8 +78,30 @@ export interface ExamRequest {
   description?: string
   dueDate?: string
   duration: number
+  examType?: string
   classroomIds: number[]
   questions: QuestionRequest[]
+}
+
+export const EXAM_TYPE_OPTIONS = [
+  { value: 'QUIZ_15', label: '15 phút', duration: 15 },
+  { value: 'TEST_45', label: '45 phút', duration: 45 },
+  { value: 'MIDTERM', label: 'Giữa kỳ', duration: 90 },
+  { value: 'FINAL', label: 'Cuối kỳ', duration: 120 },
+] as const
+
+export const EXAM_TYPE_LABELS: Record<string, string> = {
+  QUIZ_15: '15 phút',
+  TEST_45: '45 phút',
+  MIDTERM: 'Giữa kỳ',
+  FINAL: 'Cuối kỳ',
+}
+
+export const EXAM_TYPE_COLORS: Record<string, string> = {
+  QUIZ_15: '#22c55e',
+  TEST_45: '#3b82f6',
+  MIDTERM: '#f59e0b',
+  FINAL: '#ef4444',
 }
 
 const examAPI = {
