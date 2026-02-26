@@ -111,6 +111,9 @@ const examAPI = {
   getMy: () =>
     api.get<ApiResponse<ExamResponse[]>>('/exams/my'),
 
+  getEnrolled: () =>
+    api.get<ApiResponse<ExamResponse[]>>('/exams/enrolled'),
+
   getById: (id: number) =>
     api.get<ApiResponse<ExamResponse>>(`/exams/${id}`),
 

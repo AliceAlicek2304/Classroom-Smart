@@ -25,7 +25,7 @@ const TeacherClassroomsPage = () => {
   const [filterStatus, setFilterStatus] = useState('active')
   const [filterSchoolYear, setFilterSchoolYear] = useState('')
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   const currentYear = new Date().getFullYear()
   const [formData, setFormData] = useState<ClassroomRequest>({
@@ -408,7 +408,7 @@ const TeacherClassroomsPage = () => {
           onUpdate={fetchData}
         />
       )}
-      <ConfirmDialog />
+      {confirmDialog}
     </div>
     </TeacherLayout>
   )

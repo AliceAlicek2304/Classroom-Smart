@@ -22,6 +22,7 @@ import com.alice.education.model.Question;
 import com.alice.education.repository.AccountRepository;
 import com.alice.education.repository.AssignmentRepository;
 import com.alice.education.repository.AssignmentSubmissionRepository;
+import com.alice.education.repository.ClassStudentRepository;
 import com.alice.education.repository.ClassroomRepository;
 
 @Service
@@ -35,6 +36,9 @@ public class AssignmentService {
 
     @Autowired
     private ClassroomRepository classroomRepository;
+
+    @Autowired
+    private ClassStudentRepository classStudentRepository;
 
     @Autowired
     private AssignmentSubmissionRepository submissionRepository;
@@ -108,6 +112,28 @@ public class AssignmentService {
         return assignmentRepository.findByTeacherId(teacher.getId()).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public List<AssignmentResponse> getEnrolledAssignments() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account student = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        List<Long> classroomIds = classStudentRepository.findActiveByStudentId(student.getId())
+                .stream().map(cs -> cs.getClassroom().getId()).collect(Collectors.toList());
+
+        Set<Long> seen = new HashSet<>();
+        List<AssignmentResponse> result = new ArrayList<>();
+        for (Long cid : classroomIds) {
+            for (Assignment a : assignmentRepository.findByClassroomsId(cid)) {
+                if (Boolean.TRUE.equals(a.getIsActive()) && a.getDueDate() != null && seen.add(a.getId())) {
+                    AssignmentResponse res = mapToResponse(a, false);
+                    res.setHasSubmitted(submissionRepository.existsByAssignment_IdAndStudent_Username(a.getId(), username));
+                    result.add(res);
+                }
+            }
+        }
+        return result;
     }
 
     public List<AssignmentResponse> getAssignmentsByClassroom(Long classroomId) {

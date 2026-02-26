@@ -6,6 +6,82 @@
   padding-top: 68px; /* Chiều cao cố định của Header */
 }
 
+/* ===== User Profile Card in Sidebar ===== */
+.userCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.5rem 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px dashed #eee;
+  text-align: center;
+}
+
+.userCardAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px solid var(--dark);
+  box-shadow: 3px 3px 0 var(--dark);
+  overflow: hidden;
+  background: var(--purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.userCardAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userCardAvatar span {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--dark);
+}
+
+.userCardInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.userCardName {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--dark);
+  line-height: 1.2;
+}
+
+.userCardUsername {
+  font-size: 0.82rem;
+  color: var(--gray);
+  font-weight: 600;
+}
+
+.roleBadge {
+  margin-top: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 2px solid var(--dark);
+  box-shadow: 2px 2px 0 var(--dark);
+  letter-spacing: 0.3px;
+}
+
+.roleADMIN   { background: #FEF3C7; color: #92400E; }
+.roleTEACHER { background: #DBEAFE; color: #1D4ED8; }
+.roleCUSTOMER { background: var(--purple-light); color: var(--purple); }
+
 .profileContent {
   flex: 1;
   max-width: 1200px;
@@ -251,6 +327,11 @@
     overflow-x: auto;
     gap: 1rem;
     padding: 1rem;
+    align-items: center;
+  }
+  
+  .userCard {
+    display: none;
   }
   
   .sidebarTitle {

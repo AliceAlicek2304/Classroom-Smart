@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, type ReactNode } from 'react'
 import ConfirmModal from '../components/ConfirmModal'
 
 interface ConfirmOptions {
@@ -41,7 +41,7 @@ export const useConfirm = () => {
     setIsOpen(false)
   }
 
-  const ConfirmDialog = () => (
+  const confirmDialog: ReactNode = (
     <ConfirmModal
       isOpen={isOpen}
       title={options.title}
@@ -54,5 +54,5 @@ export const useConfirm = () => {
     />
   )
 
-  return { confirm, ConfirmDialog }
+  return { confirm, confirmDialog }
 }

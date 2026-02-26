@@ -32,7 +32,7 @@ const TextbooksPage = () => {
   const [chapterModalTextbookId, setChapterModalTextbookId] = useState<number>(0)
 
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   const [formData, setFormData] = useState<TextbookRequest>({
     title: '', description: '', publisher: '',
@@ -544,7 +544,7 @@ const TextbooksPage = () => {
           </div>
         )}
 
-        <ConfirmDialog />
+        {confirmDialog}
       </div>
     </AdminLayout>
   )

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts'
 import { useToast } from '../Toast'
 import { AuthModal } from '../Auth'
+import DeadlinePanel from '../DeadlinePanel/DeadlinePanel'
 import styles from './Header.module.css'
 
 const Header = () => {
@@ -63,6 +64,9 @@ const Header = () => {
 
           {isAuthenticated && user ? (
             <div className={styles.userMenu} ref={dropdownRef}>
+              {user.role === 'CUSTOMER' && (
+                <DeadlinePanel mode="customer" compact />
+              )}
               <button 
                 className={styles.avatarButton}
                 onClick={() => setDropdownOpen(!dropdownOpen)}

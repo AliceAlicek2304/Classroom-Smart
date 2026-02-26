@@ -50,7 +50,7 @@ const TeacherAssignmentsPage = () => {
   const [filterAssignClassroom, setFilterAssignClassroom] = useState('')
   const [filterAssignGrade, setFilterAssignGrade] = useState('')
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   // AI panel state
   const [showAIPanel, setShowAIPanel] = useState(false)
@@ -744,7 +744,7 @@ const TeacherAssignmentsPage = () => {
         </div>
       )}
 
-      <ConfirmDialog />
+      {confirmDialog}
 
       {/* Submissions Modal */}
       {showSubmissionsModal && submissionsAssignment && (() => {

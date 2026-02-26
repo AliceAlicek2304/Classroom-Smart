@@ -7,6 +7,9 @@ public class DashboardStatsResponse {
     private long totalTextbooks;
     private long activeClassrooms;
     private long totalStudents;
+    private long totalAssignments;
+    private long totalExams;
+    private long totalSubmissions;
     private List<RecentActivityResponse> recentActivities;
 
     public DashboardStatsResponse() {
@@ -59,5 +62,29 @@ public class DashboardStatsResponse {
 
     public void setRecentActivities(List<RecentActivityResponse> recentActivities) {
         this.recentActivities = recentActivities;
+    }
+
+    public long getTotalAssignments() {
+        return totalAssignments;
+    }
+
+    public void setTotalAssignments(long totalAssignments) {
+        this.totalAssignments = totalAssignments;
+    }
+
+    public long getTotalExams() {
+        return totalExams;
+    }
+
+    public void setTotalExams(long totalExams) {
+        this.totalExams = totalExams;
+    }
+
+    public long getTotalSubmissions() {
+        return totalSubmissions;
+    }
+
+    public void setTotalSubmissions(long totalSubmissions) {
+        this.totalSubmissions = totalSubmissions;
     }
 }

@@ -52,7 +52,7 @@ const TeacherExamsPage = () => {
   const [filterExamType, setFilterExamType] = useState('')
 
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   // AI panel state
   const [showAIPanel, setShowAIPanel] = useState(false)
@@ -792,7 +792,7 @@ const TeacherExamsPage = () => {
         </div>
       )}
 
-      <ConfirmDialog />
+      {confirmDialog}
 
       {/* Submissions Modal */}
       {showSubmissionsModal && submissionsExam && (() => {

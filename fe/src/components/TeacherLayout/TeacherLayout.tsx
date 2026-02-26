@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts'
 import { useToast } from '../Toast'
@@ -21,6 +21,8 @@ const TeacherLayout = ({ children }: TeacherLayoutProps) => {
     navigate('/')
   }
 
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   const getInitials = (name?: string) => {
     if (!name) return '?'
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -28,7 +30,8 @@ const TeacherLayout = ({ children }: TeacherLayoutProps) => {
 
   return (
     <div className={styles.layout}>
-      <aside className={styles.sidebar}>
+      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Close sidebar">✕</button>
         <div className={styles.sidebarHeader}>
           <div className={styles.logo}>
             <span className={styles.logoIcon}>🎓</span>
@@ -100,8 +103,12 @@ const TeacherLayout = ({ children }: TeacherLayoutProps) => {
       </aside>
 
       <main className={styles.main}>
+        <button className={styles.hamburger} onClick={() => setSidebarOpen(true)} aria-label="Open menu">
+          ☰
+        </button>
         {children}
       </main>
+      {sidebarOpen && <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />}
     </div>
   )
 }

@@ -23,7 +23,7 @@ const ClassroomsPage = () => {
   const [editingClassroom, setEditingClassroom] = useState<Classroom | null>(null)
   const [searchKeyword, setSearchKeyword] = useState('')
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   const currentYear = new Date().getFullYear()
   const [formData, setFormData] = useState<ClassroomRequest & { teacherId?: number }>({
@@ -354,7 +354,7 @@ const ClassroomsPage = () => {
             onUpdate={fetchData}
           />
         )}
-        <ConfirmDialog />
+        {confirmDialog}
       </div>
     </AdminLayout>
   )

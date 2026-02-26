@@ -85,6 +85,9 @@ cd be .dashboard {
 .statIcon.blue { background: #E0F2FE; color: #0284C7; border-color: #0284C7; }
 .statIcon.green { background: var(--green-bg); color: var(--green-dark); border-color: var(--green); }
 .statIcon.orange { background: #FFEDD5; color: #EA580C; border-color: #EA580C; }
+.statIcon.red { background: #FEE2E2; color: #DC2626; border-color: #DC2626; }
+.statIcon.teal { background: #CCFBF1; color: #0F766E; border-color: #0F766E; }
+.statIcon.indigo { background: #E0E7FF; color: #4338CA; border-color: #4338CA; }
 
 .statLabel {
   font-size: 0.875rem;

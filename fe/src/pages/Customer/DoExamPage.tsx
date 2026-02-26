@@ -17,7 +17,7 @@ const DoExamPage = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   const [exam, setExam] = useState<ExamResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -39,7 +39,59 @@ const DoExamPage = () => {
   const selectedRef = useRef<Record<number, string>>({})
   const hasSubmittedRef = useRef(false)
   const examRef = useRef<ExamResponse | null>(null)
+  const questionRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const examId = Number(id)
+
+  const shouldBlock = useCallback(() => {
+    const currentExam = examRef.current
+    return (
+      !hasSubmittedRef.current &&
+      currentExam !== null &&
+      !(currentExam.dueDate && new Date(currentExam.dueDate) < new Date())
+    )
+  }, [])
+
+  // Manual navigation guard (BrowserRouter does not support useBlocker)
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
+  const pendingNavRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (shouldBlock()) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    const handlePopState = () => {
+      if (shouldBlock()) {
+        // Push state back to prevent the navigation
+        window.history.pushState(null, '', window.location.href)
+        pendingNavRef.current = '/customer/classrooms'
+        setShowLeaveModal(true)
+      }
+    }
+    // Push a dummy entry so popstate fires when user hits Back
+    window.history.pushState(null, '', window.location.href)
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    window.addEventListener('popstate', handlePopState)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [shouldBlock])
+
+  const safeNavigate = useCallback((path: string) => {
+    if (shouldBlock()) {
+      pendingNavRef.current = path
+      setShowLeaveModal(true)
+    } else {
+      navigate(path)
+    }
+  }, [shouldBlock, navigate])
+
+  useEffect(() => {
+    if (submission) window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [submission])
 
   const handleSelect = (questionId: number, answer: string) => {
     const updated = { ...selectedRef.current, [questionId]: answer }
@@ -227,7 +279,7 @@ const DoExamPage = () => {
         {/* ── Page header ──────────────────────────────────────────── */}
         <div className={styles.pageHeader}>
           {hasSubmitted && (
-            <button className={styles.btnBack} onClick={() => navigate('/customer/classrooms')}>
+            <button className={styles.btnBack} onClick={() => safeNavigate('/customer/classrooms')}>
               ← Quay lại
             </button>
           )}
@@ -304,8 +356,21 @@ const DoExamPage = () => {
         {/* ── Đã nộp → hiện kết quả ───────────────────────────────── */}
         {hasSubmitted && submission && (
           <div className={styles.resultCard}>
-            <div className={`${styles.scoreNumber} ${submission.score >= 5 ? styles.pass : styles.fail}`}>
-              {submission.score.toFixed(1)}
+            <div className={styles.scoreRingWrap}>
+              <svg viewBox="0 0 100 100" className={styles.scoreRing}>
+                <circle cx="50" cy="50" r="38" className={styles.scoreRingBg} />
+                <circle
+                  cx="50" cy="50" r="38"
+                  className={`${styles.scoreRingFill} ${submission.score >= 5 ? styles.pass : styles.fail}`}
+                  style={{ strokeDashoffset: 238.76 * (1 - submission.score / 10) }}
+                />
+              </svg>
+              <div className={styles.scoreRingCenter}>
+                <div className={`${styles.scoreNumber} ${submission.score >= 5 ? styles.pass : styles.fail}`}>
+                  {submission.score.toFixed(1)}
+                </div>
+                <div className={styles.scoreSlash}>/10</div>
+              </div>
             </div>
             <div className={styles.scoreSub}>
               {submission.correctCount}/{submission.totalCount} câu đúng
@@ -366,18 +431,27 @@ const DoExamPage = () => {
         {/* ── Chưa nộp, chưa quá hạn, đang làm bài ───────────────── */}
         {!hasSubmitted && !isOverdue && (
           <>
-            <div className={styles.progressBar}>
-              <div
-                className={styles.progressFill}
-                style={{ width: totalQuestions ? `${(answeredCount / totalQuestions) * 100}%` : '0%' }}
-              />
-            </div>
-            <div className={styles.progressLabel}>
-              {answeredCount}/{totalQuestions} câu đã trả lời
+            <div className={styles.progressSticky}>
+              <div className={styles.progressBar}>
+                <div
+                  className={styles.progressFill}
+                  style={{ width: totalQuestions ? `${(answeredCount / totalQuestions) * 100}%` : '0%' }}
+                />
+              </div>
+              <div className={styles.progressLabel}>
+                {answeredCount}/{totalQuestions} câu đã trả lời
+              </div>
             </div>
 
+            <div className={styles.examLayout}>
+            <div>
             {exam.questions.map((q, idx) => (
-              <div key={q.id} className={styles.questionCard}>
+              <div
+                key={q.id}
+                id={`q-${q.id}`}
+                ref={el => { questionRefs.current[q.id] = el }}
+                className={styles.questionCard}
+              >
                 <div className={styles.questionMeta}>Câu {idx + 1}</div>
                 <div className={styles.questionText}>{q.content}</div>
                 <div className={styles.options}>
@@ -414,12 +488,61 @@ const DoExamPage = () => {
                 {submitting ? 'Đang nộp...' : '📤 Nộp bài'}
               </button>
             </div>
+            </div>
+
+            <aside className={styles.navSidebar}>
+              <div className={styles.navTitle}>📋 Điều hướng</div>
+              <div className={styles.navGrid}>
+                {exam.questions.map((q, qi) => (
+                  <button
+                    key={q.id}
+                    className={`${styles.navBtn}${selected[q.id] ? ` ${styles.navBtnAnswered}` : ''}`}
+                    onClick={() => document.getElementById(`q-${q.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  >
+                    {qi + 1}
+                  </button>
+                ))}
+              </div>
+              <div className={styles.navStats}>
+                <span className={styles.navAnsweredCount}>{answeredCount}</span>/{totalQuestions}
+                <span className={styles.navStatsLabel}> đã trả lời</span>
+              </div>
+            </aside>
+            </div>
           </>
+        )}
+
+        {showLeaveModal && (
+          <div className={styles.blockerOverlay}>
+            <div className={styles.blockerModal}>
+              <div className={styles.blockerIcon}>⚠️</div>
+              <h2 className={styles.blockerTitle}>Rời khỏi bài thi?</h2>
+              <p className={styles.blockerBody}>
+                Bạn đang làm bài kiểm tra. Nếu rời khỏi trang, bài kiểm tra sẽ không được nộp.
+              </p>
+              <div className={styles.blockerActions}>
+                <button className={styles.blockerBtnContinue} onClick={() => {
+                  setShowLeaveModal(false)
+                  pendingNavRef.current = null
+                }}>
+                  Tiếp tục thi
+                </button>
+                <button className={styles.blockerBtnLeave} onClick={() => {
+                  const dest = pendingNavRef.current || '/customer/classrooms'
+                  pendingNavRef.current = null
+                  setShowLeaveModal(false)
+                  navigate(dest)
+                }}>
+                  Rời trang
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
       </main>
       <Footer />
-      <ConfirmDialog />
+      {confirmDialog}
     </div>
   )
 }

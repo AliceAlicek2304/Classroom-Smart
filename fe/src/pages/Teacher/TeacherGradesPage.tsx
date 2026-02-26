@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import TeacherLayout from '../../components/TeacherLayout/TeacherLayout'
 import { EmptyState } from '../../components/EmptyState'
 import { TableSkeleton } from '../../components/Skeleton'
@@ -45,6 +45,20 @@ const TeacherGradesPage = () => {
   const [newColName, setNewColName] = useState('')
   const [newColType, setNewColType] = useState('QUIZ_15')
   const [addingColumn, setAddingColumn] = useState(false)
+
+  const [showChart, setShowChart] = useState(false)
+
+  const [sortBy, setSortBy] = useState<'name' | number | null>(null)
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+
+  const handleSort = (by: 'name' | number) => {
+    if (sortBy === by) {
+      setSortDir(prev => prev === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortBy(by)
+      setSortDir('asc')
+    }
+  }
 
   // Exam picker state
   const [classroomExams, setClassroomExams] = useState<ExamResponse[]>([])
@@ -94,6 +108,61 @@ const TeacherGradesPage = () => {
     if (score >= 8) return '#22c55e'
     if (score >= 5) return '#f59e0b'
     return '#ef4444'
+  }
+
+  const sortedRows = useMemo(() => {
+    if (!gradeBook) return []
+    const rows = [...gradeBook.rows]
+    if (!sortBy) return rows
+    if (sortBy === 'name') {
+      return rows.sort((a, b) =>
+        sortDir === 'asc'
+          ? a.studentName.localeCompare(b.studentName, 'vi')
+          : b.studentName.localeCompare(a.studentName, 'vi')
+      )
+    }
+    return rows.sort((a, b) => {
+      const aScore = a.grades.find(g => g.columnId === sortBy)?.score ?? null
+      const bScore = b.grades.find(g => g.columnId === sortBy)?.score ?? null
+      if (aScore === null && bScore === null) return 0
+      if (aScore === null) return 1
+      if (bScore === null) return -1
+      return sortDir === 'asc' ? aScore - bScore : bScore - aScore
+    })
+  }, [gradeBook, sortBy, sortDir])
+
+  const chartData = useMemo(() => {
+    if (!gradeBook) return []
+    return gradeBook.columns.map(col => {
+      const scores = gradeBook.rows
+        .map(r => r.grades.find(g => g.columnId === col.id)?.score)
+        .filter((s): s is number => s !== null && s !== undefined)
+      const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : null
+      return { col, avg, count: scores.length, total: gradeBook.rows.length }
+    })
+  }, [gradeBook])
+
+  const distributionData = useMemo(() => {
+    if (!gradeBook) return null
+    const allScores = gradeBook.rows.flatMap(r =>
+      r.grades.map(g => g.score).filter((s): s is number => s !== null && s !== undefined)
+    )
+    const total = allScores.length || 1
+    return [
+      { label: '9–10 (Giỏi)', min: 9, max: 10, color: '#22c55e' },
+      { label: '7–8 (Khá)', min: 7, max: 8.99, color: '#84cc16' },
+      { label: '5–6 (TB)', min: 5, max: 6.99, color: '#f59e0b' },
+      { label: '0–4 (Yếu)', min: 0, max: 4.99, color: '#ef4444' },
+    ].map(r => ({
+      ...r,
+      count: allScores.filter(s => s >= r.min && s <= r.max).length,
+      pct: Math.round(allScores.filter(s => s >= r.min && s <= r.max).length / total * 100),
+    }))
+  }, [gradeBook])
+
+  const sortIcon = (by: 'name' | number) => {
+    if (sortBy !== by) return <span className={gradeStyles.sortIconNeutral}>⇅</span>
+    return <span className={gradeStyles.sortIconActive}>{sortDir === 'asc' ? '▲' : '▼'}</span>
   }
 
   const startEdit = (gradeId: number | null, columnId: number, studentId: number, currentScore: number | null | undefined) => {
@@ -265,6 +334,15 @@ const TeacherGradesPage = () => {
                   📊 Xuất CSV
                 </button>
               )}
+              {gradeBook && gradeBook.rows.length > 0 && (
+                <button
+                  className={styles.btnCreate}
+                  style={{ background: showChart ? 'var(--purple)' : undefined, color: showChart ? 'white' : undefined }}
+                  onClick={() => setShowChart(v => !v)}
+                >
+                  {showChart ? '📄 Bảng' : '📊 Biểu đồ'}
+                </button>
+              )}
               <button className={styles.btnCreate} onClick={() => setShowAddColumn(true)}>
                 ➕ Thêm cột điểm
               </button>
@@ -292,6 +370,52 @@ const TeacherGradesPage = () => {
           <TableSkeleton cols={5} rows={6} />
         )}
 
+        {!loading && gradeBook && gradeBook.rows.length > 0 && showChart && (
+          <div className={gradeStyles.chartPanel}>
+            <h3>📊 Biểu đồ điểm trung bình theo cột</h3>
+            <div className={gradeStyles.chartBars}>
+              {chartData.map(({ col, avg, count, total }) => (
+                <div key={col.id} className={gradeStyles.chartBarGroup}>
+                  <div className={gradeStyles.chartBarWrap}>
+                    <span className={gradeStyles.chartBarValue}>
+                      {avg !== null ? avg.toFixed(1) : '—'}
+                    </span>
+                    <div
+                      className={gradeStyles.chartBarFill}
+                      style={{
+                        height: avg !== null ? `${(avg / 10) * 100}%` : '0%',
+                        background: avg === null ? '#e5e7eb'
+                          : avg >= 8 ? '#22c55e'
+                          : avg >= 5 ? '#f59e0b'
+                          : '#ef4444',
+                      }}
+                    />
+                  </div>
+                  <span className={gradeStyles.chartBarLabel}>{col.name}</span>
+                  <span className={gradeStyles.chartBarCount}>{count}/{total}</span>
+                </div>
+              ))}
+            </div>
+            {distributionData && (
+              <div className={gradeStyles.chartDistSection}>
+                <div className={gradeStyles.chartDistTitle}>Phân loại học lực</div>
+                {distributionData.map(r => (
+                  <div key={r.label} className={gradeStyles.chartDistRow}>
+                    <span className={gradeStyles.chartDistLabel}>{r.label}</span>
+                    <div className={gradeStyles.chartDistTrack}>
+                      <div
+                        className={gradeStyles.chartDistBar}
+                        style={{ width: `${r.pct}%`, background: r.color }}
+                      />
+                    </div>
+                    <span className={gradeStyles.chartDistCount}>{r.count} HS ({r.pct}%)</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {!loading && !selectedClassroomId && (
           <EmptyState
             icon="📊"
@@ -314,9 +438,18 @@ const TeacherGradesPage = () => {
                   <thead>
                     <tr>
                       <th className={gradeStyles.stickyCol}>STT</th>
-                      <th className={gradeStyles.stickyCol2}>Học sinh</th>
+                      <th
+                        className={`${gradeStyles.stickyCol2} ${gradeStyles.sortableTh}`}
+                        onClick={() => handleSort('name')}
+                      >
+                        Học sinh {sortIcon('name')}
+                      </th>
                       {gradeBook.columns.map((col) => (
-                        <th key={col.id} className={gradeStyles.colHeader}>
+                        <th
+                          key={col.id}
+                          className={`${gradeStyles.colHeader} ${gradeStyles.sortableTh}`}
+                          onClick={() => handleSort(col.id)}
+                        >
                           <div className={gradeStyles.colHeaderInner}>
                             <span
                               className={gradeStyles.typeBadge}
@@ -325,10 +458,11 @@ const TeacherGradesPage = () => {
                               {GRADE_TYPE_LABELS[col.type] || col.type}
                             </span>
                             <span className={gradeStyles.colName}>{col.name}</span>
+                            {sortIcon(col.id)}
                             {col.isCustom && (
                               <button
                                 className={gradeStyles.btnDeleteCol}
-                                onClick={() => handleDeleteColumn(col)}
+                                onClick={(e) => { e.stopPropagation(); handleDeleteColumn(col) }}
                                 title="Xóa cột"
                               >
                                 ✕
@@ -340,7 +474,7 @@ const TeacherGradesPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {gradeBook.rows.map((row, idx) => (
+                    {sortedRows.map((row, idx) => (
                       <tr key={row.studentId}>
                         <td className={gradeStyles.stickyCol}>{idx + 1}</td>
                         <td className={gradeStyles.stickyCol2}>

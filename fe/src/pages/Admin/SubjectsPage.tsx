@@ -16,7 +16,7 @@ const SubjectsPage = () => {
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null)
   const [searchKeyword, setSearchKeyword] = useState('')
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   const [formData, setFormData] = useState<SubjectRequest>({
     name: '',
@@ -278,7 +278,7 @@ const SubjectsPage = () => {
             </div>
           </div>
         )}
-        <ConfirmDialog />
+        {confirmDialog}
       </div>
     </AdminLayout>
   )

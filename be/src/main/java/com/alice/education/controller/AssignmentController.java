@@ -81,6 +81,17 @@ public class AssignmentController {
         }
     }
 
+    @GetMapping("/enrolled")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<List<AssignmentResponse>>> getEnrolledAssignments() {
+        try {
+            List<AssignmentResponse> responses = assignmentService.getEnrolledAssignments();
+            return ApiResponse.success("Lấy bài tập đã đăng ký thành công", responses);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
     @GetMapping("/classroom/{classroomId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<AssignmentResponse>>> getAssignmentsByClassroom(

@@ -91,6 +91,9 @@ const assignmentAPI = {
   getMy: () =>
     api.get<ApiResponse<AssignmentResponse[]>>('/assignments/my'),
 
+  getEnrolled: () =>
+    api.get<ApiResponse<AssignmentResponse[]>>('/assignments/enrolled'),
+
   getById: (id: number) =>
     api.get<ApiResponse<AssignmentResponse>>(`/assignments/${id}`),
 

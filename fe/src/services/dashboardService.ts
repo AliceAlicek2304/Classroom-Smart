@@ -12,6 +12,9 @@ export interface DashboardStats {
   totalTextbooks: number
   activeClassrooms: number
   totalStudents: number
+  totalAssignments: number
+  totalExams: number
+  totalSubmissions: number
   recentActivities: RecentActivity[]
 }
 

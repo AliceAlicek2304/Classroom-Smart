@@ -14,7 +14,7 @@ const ChaptersPage = () => {
   const [showModal, setShowModal] = useState(false)
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null)
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   const [formData, setFormData] = useState<ChapterRequest>({
     title: '',
@@ -284,7 +284,7 @@ const ChaptersPage = () => {
             </div>
           </div>
         )}
-        <ConfirmDialog />
+        {confirmDialog}
       </div>
     </AdminLayout>
   )

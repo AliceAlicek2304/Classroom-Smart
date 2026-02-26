@@ -81,6 +81,17 @@ public class ExamController {
         }
     }
 
+    @GetMapping("/enrolled")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<List<ExamResponse>>> getEnrolledExams() {
+        try {
+            List<ExamResponse> responses = examService.getEnrolledExams();
+            return ApiResponse.success("Lấy bài kiểm tra đã đăng ký thành công", responses);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
     @GetMapping("/classroom/{classroomId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<ExamResponse>>> getExamsByClassroom(

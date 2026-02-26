@@ -40,6 +40,9 @@ const AdminDashboard = () => {
   const animTextbooks   = useCountUp(stats?.totalTextbooks   ?? 0)
   const animClassrooms  = useCountUp(stats?.activeClassrooms ?? 0)
   const animStudents    = useCountUp(stats?.totalStudents    ?? 0)
+  const animAssignments = useCountUp(stats?.totalAssignments ?? 0)
+  const animExams       = useCountUp(stats?.totalExams       ?? 0)
+  const animSubmissions = useCountUp(stats?.totalSubmissions ?? 0)
 
   return (
     <AdminLayout>
@@ -79,6 +82,30 @@ const AdminDashboard = () => {
             <div className={styles.statLabel}>Tổng học sinh</div>
             <div className={styles.statValue}>
               {loading ? '…' : animStudents}
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.red}`}>📝</div>
+            <div className={styles.statLabel}>Bài tập</div>
+            <div className={styles.statValue}>
+              {loading ? '…' : animAssignments}
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.teal}`}>📋</div>
+            <div className={styles.statLabel}>Bài kiểm tra</div>
+            <div className={styles.statValue}>
+              {loading ? '…' : animExams}
+            </div>
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.indigo}`}>📤</div>
+            <div className={styles.statLabel}>Bài đã nộp</div>
+            <div className={styles.statValue}>
+              {loading ? '…' : animSubmissions}
             </div>
           </div>
         </div>

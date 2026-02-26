@@ -271,7 +271,7 @@
 }
 
 .scoreNumber {
-  font-size: 4rem;
+  font-size: 2.5rem;
   font-weight: 900;
   line-height: 1;
   color: var(--dark);
@@ -283,6 +283,47 @@
   font-size: 1rem;
   color: var(--gray);
   margin-top: 0.4rem;
+}
+
+/* ── Score ring ─────────────────────────────────────── */
+.scoreRingWrap {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 1rem;
+}
+.scoreRing {
+  width: 130px;
+  height: 130px;
+  transform: rotate(-90deg);
+}
+.scoreRingBg {
+  fill: none;
+  stroke: var(--gray-light);
+  stroke-width: 8;
+}
+.scoreRingFill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 238.76;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s ease;
+}
+.scoreRingFill.pass { stroke: var(--green); }
+.scoreRingFill.fail { stroke: #DC2626; }
+.scoreRingCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.scoreSlash {
+  font-size: 0.78rem;
+  color: var(--gray);
+  font-weight: 600;
+  margin-top: -0.1rem;
 }
 
 .resultActions {

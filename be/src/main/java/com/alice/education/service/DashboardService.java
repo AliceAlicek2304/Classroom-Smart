@@ -6,7 +6,11 @@ import org.springframework.stereotype.Service;
 import com.alice.education.dto.DashboardStatsResponse;
 import com.alice.education.model.Role;
 import com.alice.education.repository.AccountRepository;
+import com.alice.education.repository.AssignmentRepository;
+import com.alice.education.repository.AssignmentSubmissionRepository;
 import com.alice.education.repository.ClassroomRepository;
+import com.alice.education.repository.ExamRepository;
+import com.alice.education.repository.ExamSubmissionRepository;
 import com.alice.education.repository.SubjectRepository;
 import com.alice.education.repository.TextbookRepository;
 
@@ -32,11 +36,26 @@ public class DashboardService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private ExamRepository examRepository;
+
+    @Autowired
+    private AssignmentSubmissionRepository assignmentSubmissionRepository;
+
+    @Autowired
+    private ExamSubmissionRepository examSubmissionRepository;
+
     public DashboardStatsResponse getStats() {
         long totalSubjects = subjectRepository.count();
         long totalTextbooks = textbookRepository.count();
         long activeClassrooms = classroomRepository.count();
         long totalStudents = accountRepository.countByRole(Role.CUSTOMER);
+        long totalAssignments = assignmentRepository.count();
+        long totalExams = examRepository.count();
+        long totalSubmissions = assignmentSubmissionRepository.count() + examSubmissionRepository.count();
 
         List<RecentActivityResponse> activities = new ArrayList<>();
 
@@ -64,7 +83,11 @@ public class DashboardService {
                 .limit(10)
                 .collect(Collectors.toList());
 
-        return new DashboardStatsResponse(totalSubjects, totalTextbooks, activeClassrooms, totalStudents,
+        DashboardStatsResponse response = new DashboardStatsResponse(totalSubjects, totalTextbooks, activeClassrooms, totalStudents,
                 recentActivities);
+        response.setTotalAssignments(totalAssignments);
+        response.setTotalExams(totalExams);
+        response.setTotalSubmissions(totalSubmissions);
+        return response;
     }
 }

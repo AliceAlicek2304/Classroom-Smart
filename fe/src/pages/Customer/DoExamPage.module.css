@@ -8,7 +8,7 @@
 
 .main {
   flex: 1;
-  max-width: 860px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: calc(68px + 1.5rem) 1.5rem 4rem;
   width: 100%;
@@ -196,13 +196,21 @@
 }
 
 /* ── Progress bar ───────────────────────────────────── */
+.progressSticky {
+  position: sticky;
+  top: 68px;
+  z-index: 9;
+  background: var(--bg);
+  padding: 0.5rem 0 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
 .progressBar {
   background: var(--gray-light);
   border: 2px solid var(--dark);
   border-radius: 8px;
   height: 10px;
   overflow: hidden;
-  margin-bottom: 2rem;
 }
 
 .progressFill {
@@ -214,9 +222,90 @@
 .progressLabel {
   font-size: 0.82rem;
   color: var(--gray);
-  margin-top: -1.4rem;
-  margin-bottom: 1.6rem;
+  margin-top: 0.3rem;
   text-align: right;
+}
+
+/* ── Exam 2-column layout ─────────────────────────── */
+.examLayout {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+/* ── Navigation sidebar ───────────────────────────── */
+.navSidebar {
+  position: sticky;
+  top: 108px;
+  background: var(--light);
+  border: 2px solid var(--dark);
+  box-shadow: 4px 4px 0 var(--dark);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.navTitle {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.navGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.navBtn {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border: 2px solid var(--gray-light);
+  background: var(--bg);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--dark);
+  cursor: pointer;
+  transition: all 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.navBtn:hover {
+  border-color: var(--purple);
+  background: #F5F0FF;
+}
+.navBtnAnswered {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #fff;
+}
+.navBtnAnswered:hover {
+  background: #6d28d9;
+  border-color: #6d28d9;
+}
+
+.navStats {
+  font-size: 0.82rem;
+  color: var(--gray);
+  text-align: center;
+  border-top: 1.5px solid var(--gray-light);
+  padding-top: 0.6rem;
+}
+.navAnsweredCount {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--purple);
+}
+.navStatsLabel {
+  font-size: 0.78rem;
+  color: var(--gray);
 }
 
 /* ── Question card ──────────────────────────────────── */
@@ -370,7 +459,7 @@
 }
 
 .scoreNumber {
-  font-size: 4rem;
+  font-size: 2.5rem;
   font-weight: 900;
   line-height: 1;
   color: var(--dark);
@@ -382,4 +471,130 @@
   font-size: 1rem;
   color: var(--gray);
   margin-top: 0.4rem;
+}
+
+/* ── Score ring ─────────────────────────────────────── */
+.scoreRingWrap {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 1rem;
+}
+.scoreRing {
+  width: 130px;
+  height: 130px;
+  transform: rotate(-90deg);
+}
+.scoreRingBg {
+  fill: none;
+  stroke: var(--gray-light);
+  stroke-width: 8;
+}
+.scoreRingFill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 238.76;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s ease;
+}
+.scoreRingFill.pass { stroke: var(--green); }
+.scoreRingFill.fail { stroke: #DC2626; }
+.scoreRingCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.scoreSlash {
+  font-size: 0.78rem;
+  color: var(--gray);
+  font-weight: 600;
+  margin-top: -0.1rem;
+}
+
+/* ── Blocker overlay ───────────────────────────────── */
+.blockerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.blockerModal {
+  background: var(--bg);
+  border: 3px solid #F59E0B;
+  box-shadow: 8px 8px 0 #F59E0B;
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+.blockerIcon { font-size: 2.8rem; margin-bottom: 0.5rem; }
+.blockerTitle {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--dark);
+  margin: 0 0 0.75rem;
+}
+.blockerBody {
+  font-size: 0.93rem;
+  color: var(--gray);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.blockerActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.blockerBtnContinue {
+  background: var(--dark);
+  color: var(--light);
+  border: 2px solid var(--dark);
+  box-shadow: 4px 4px 0 var(--green);
+  border-radius: 10px;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.blockerBtnContinue:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--green);
+}
+.blockerBtnLeave {
+  background: var(--light);
+  color: #DC2626;
+  border: 2px solid #DC2626;
+  box-shadow: 4px 4px 0 #DC2626;
+  border-radius: 10px;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.blockerBtnLeave:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #DC2626;
+}
+
+@media (max-width: 768px) {
+  .examLayout {
+    grid-template-columns: 1fr;
+  }
+  .navSidebar {
+    position: static;
+    order: -1;
+  }
+  .navGrid {
+    grid-template-columns: repeat(8, 1fr);
+  }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
@@ -14,7 +14,7 @@ const DoAssignmentPage = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   const [assignment, setAssignment] = useState<AssignmentResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -83,6 +83,14 @@ const DoAssignmentPage = () => {
     }
   }
 
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  useEffect(() => {
+    if (submission) scrollToTop()
+  }, [submission, scrollToTop])
+
   if (loading) {
     return (
       <div className={styles.wrapper}>
@@ -143,8 +151,21 @@ const DoAssignmentPage = () => {
         {/* ── Đã nộp → hiện điểm ── */}
         {hasSubmitted && submission && (
           <div className={styles.resultCard}>
-            <div className={`${styles.scoreNumber} ${submission.score >= 5 ? styles.pass : styles.fail}`}>
-              {submission.score.toFixed(1)}
+            <div className={styles.scoreRingWrap}>
+              <svg viewBox="0 0 100 100" className={styles.scoreRing}>
+                <circle cx="50" cy="50" r="38" className={styles.scoreRingBg} />
+                <circle
+                  cx="50" cy="50" r="38"
+                  className={`${styles.scoreRingFill} ${submission.score >= 5 ? styles.pass : styles.fail}`}
+                  style={{ strokeDashoffset: 238.76 * (1 - submission.score / 10) }}
+                />
+              </svg>
+              <div className={styles.scoreRingCenter}>
+                <div className={`${styles.scoreNumber} ${submission.score >= 5 ? styles.pass : styles.fail}`}>
+                  {submission.score.toFixed(1)}
+                </div>
+                <div className={styles.scoreSlash}>/10</div>
+              </div>
             </div>
             <div className={styles.scoreSub}>
               {submission.correctCount}/{submission.totalCount} câu đúng
@@ -260,7 +281,7 @@ const DoAssignmentPage = () => {
 
       </main>
       <Footer />
-      <ConfirmDialog />
+      {confirmDialog}
     </div>
   )
 }

@@ -283,6 +283,29 @@ const ProfilePage = () => {
       
       <main className={styles.profileContent}>
         <aside className={styles.internalSidebar}>
+          {user && (
+            <div className={styles.userCard}>
+              <div className={styles.userCardAvatar}>
+                {user.avatar ? (
+                  <img
+                    src={user.avatar.startsWith('http') ? user.avatar : `http://localhost:8080${user.avatar}`}
+                    alt={user.fullName}
+                  />
+                ) : (
+                  <span>{getInitials(user.fullName)}</span>
+                )}
+              </div>
+              <div className={styles.userCardInfo}>
+                <div className={styles.userCardName}>{user.fullName}</div>
+                <div className={styles.userCardUsername}>@{user.username}</div>
+                <span className={`${styles.roleBadge} ${styles[`role${user.role}`]}`}>
+                  {user.role === 'ADMIN' ? '👑 Admin'
+                    : user.role === 'TEACHER' ? '🎓 Giáo viên'
+                    : '📚 Học sinh'}
+                </span>
+              </div>
+            </div>
+          )}
           <div className={styles.sidebarTitle}>Cài đặt tài khoản</div>
           <nav className={styles.sidebarNav}>
             <div 

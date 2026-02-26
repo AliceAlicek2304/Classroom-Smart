@@ -20,6 +20,7 @@ import com.alice.education.model.Classroom;
 import com.alice.education.model.Exam;
 import com.alice.education.model.Question;
 import com.alice.education.repository.AccountRepository;
+import com.alice.education.repository.ClassStudentRepository;
 import com.alice.education.repository.ClassroomRepository;
 import com.alice.education.repository.ExamRepository;
 import com.alice.education.repository.ExamSubmissionRepository;
@@ -35,6 +36,9 @@ public class ExamService {
 
     @Autowired
     private ClassroomRepository classroomRepository;
+
+    @Autowired
+    private ClassStudentRepository classStudentRepository;
 
     @Autowired
     private ExamSubmissionRepository examSubmissionRepository;
@@ -108,6 +112,28 @@ public class ExamService {
         return examRepository.findByTeacherId(teacher.getId()).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public List<ExamResponse> getEnrolledExams() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account student = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        List<Long> classroomIds = classStudentRepository.findActiveByStudentId(student.getId())
+                .stream().map(cs -> cs.getClassroom().getId()).collect(Collectors.toList());
+
+        Set<Long> seen = new HashSet<>();
+        List<ExamResponse> result = new ArrayList<>();
+        for (Long cid : classroomIds) {
+            for (Exam e : examRepository.findByClassroomsId(cid)) {
+                if (Boolean.TRUE.equals(e.getIsActive()) && e.getDueDate() != null && seen.add(e.getId())) {
+                    ExamResponse res = mapToResponse(e, false);
+                    res.setHasSubmitted(examSubmissionRepository.existsByExam_IdAndStudent_Username(e.getId(), username));
+                    result.add(res);
+                }
+            }
+        }
+        return result;
     }
 
     public List<ExamResponse> getExamsByClassroom(Long classroomId) {

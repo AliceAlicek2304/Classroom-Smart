@@ -70,7 +70,12 @@ function buildItems(
   return items.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
 }
 
-export default function DeadlinePanel() {
+export interface DeadlinePanelProps {
+  mode?: 'teacher' | 'customer'
+  compact?: boolean
+}
+
+export default function DeadlinePanel({ mode = 'teacher', compact = false }: DeadlinePanelProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [items, setItems] = useState<DeadlineItem[]>([])
@@ -78,17 +83,24 @@ export default function DeadlinePanel() {
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
-      const [aRes, eRes] = await Promise.all([
-        assignmentAPI.getMy(),
-        examAPI.getMy(),
-      ])
-      setItems(buildItems(aRes.data.data || [], eRes.data.data || []))
+      if (mode === 'customer') {
+        const [aRes, eRes] = await Promise.all([
+          assignmentAPI.getEnrolled(),
+          examAPI.getEnrolled(),
+        ])
+        setItems(buildItems(aRes.data.data || [], eRes.data.data || []))
+      } else {
+        const [aRes, eRes] = await Promise.all([
+          assignmentAPI.getMy(),
+          examAPI.getMy(),
+        ])
+        setItems(buildItems(aRes.data.data || [], eRes.data.data || []))
+      }
     } catch {
-      // silent — panel shows empty state
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [mode])
 
   useEffect(() => {
     if (open) fetchData()
@@ -175,7 +187,7 @@ export default function DeadlinePanel() {
   return (
     <>
       <button
-        className={styles.bellBtn}
+        className={compact ? styles.bellBtnCompact : styles.bellBtn}
         onClick={() => setOpen(v => !v)}
         aria-label="Xem thông báo deadline"
       >
@@ -185,7 +197,7 @@ export default function DeadlinePanel() {
             <span className={styles.badge}>{urgentCount > 9 ? '9+' : urgentCount}</span>
           )}
         </span>
-        Thông báo deadline
+        {!compact && 'Thông báo deadline'}
       </button>
       {panel}
     </>

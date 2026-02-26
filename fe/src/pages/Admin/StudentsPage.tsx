@@ -15,7 +15,7 @@ const StudentsPage = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all')
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   useEffect(() => {
     fetchStudents()
@@ -180,7 +180,7 @@ const StudentsPage = () => {
           </div>
         )}
         <Pagination page={page} totalPages={totalPages} total={total} pageSize={pageSize} onPageChange={setPage} />
-        <ConfirmDialog />
+        {confirmDialog}
       </div>
     </AdminLayout>
   )
