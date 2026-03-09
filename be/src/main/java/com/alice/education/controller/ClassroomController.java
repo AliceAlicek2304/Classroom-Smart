@@ -30,13 +30,14 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/classrooms")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ClassroomController {
-    
+
     @Autowired
     private ClassroomService classroomService;
-    
+
     @PostMapping
     @PreAuthorize("hasRole('TEACHER')")
-    public ResponseEntity<ApiResponse<ClassroomResponse>> createClassroom(@Valid @RequestBody ClassroomRequest request) {
+    public ResponseEntity<ApiResponse<ClassroomResponse>> createClassroom(
+            @Valid @RequestBody ClassroomRequest request) {
         try {
             ClassroomResponse response = classroomService.createClassroom(request);
             return ApiResponse.success("Classroom created successfully", response);
@@ -44,7 +45,7 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<ClassroomResponse>> getClassroomById(@PathVariable Long id) {
@@ -55,7 +56,7 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<ClassroomResponse>>> getAllClassrooms() {
@@ -66,7 +67,7 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/my-classrooms")
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ApiResponse<List<ClassroomResponse>>> getMyClassrooms() {
@@ -77,7 +78,7 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/subject/{subjectId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<ClassroomResponse>>> getClassroomsBySubject(@PathVariable Long subjectId) {
@@ -88,7 +89,7 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'CUSTOMER')")
     public ResponseEntity<ApiResponse<List<ClassroomResponse>>> searchClassrooms(@RequestParam String keyword) {
@@ -99,11 +100,11 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public ResponseEntity<ApiResponse<ClassroomResponse>> updateClassroom(
-            @PathVariable Long id, 
+            @PathVariable Long id,
             @Valid @RequestBody ClassroomRequest request) {
         try {
             ClassroomResponse response = classroomService.updateClassroom(id, request);
@@ -112,9 +113,9 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     public ResponseEntity<ApiResponse<Void>> deleteClassroom(@PathVariable Long id) {
         try {
             classroomService.deleteClassroom(id);
@@ -123,7 +124,7 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @PostMapping("/{classroomId}/students")
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ApiResponse<StudentInClassResponse>> addStudent(
@@ -136,7 +137,7 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @DeleteMapping("/{classroomId}/students/{studentId}")
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ApiResponse<Void>> removeStudent(
@@ -149,10 +150,11 @@ public class ClassroomController {
             return ApiResponse.error(e.getMessage());
         }
     }
-    
+
     @GetMapping("/{classroomId}/students")
     @PreAuthorize("hasAnyRole('TEACHER', 'CUSTOMER')")
-    public ResponseEntity<ApiResponse<List<StudentInClassResponse>>> getStudentsInClassroom(@PathVariable Long classroomId) {
+    public ResponseEntity<ApiResponse<List<StudentInClassResponse>>> getStudentsInClassroom(
+            @PathVariable Long classroomId) {
         try {
             List<StudentInClassResponse> responses = classroomService.getStudentsInClassroom(classroomId);
             return ApiResponse.success("Students retrieved successfully", responses);

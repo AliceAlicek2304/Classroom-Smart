@@ -32,7 +32,7 @@ const ClassroomsPage = () => {
     schoolYear: `${currentYear}-${currentYear + 1}`,
     description: '',
     subjectId: 0,
-    teacherId: 0
+    password: ''
   })
 
   useEffect(() => {
@@ -70,18 +70,6 @@ const ClassroomsPage = () => {
     }
   }
 
-  const handleCreate = () => {
-    setEditingClassroom(null)
-    setFormData({
-      name: '',
-      gradeLevel: '6',
-      schoolYear: `${currentYear}-${currentYear + 1}`,
-      description: '',
-      subjectId: subjects[0]?.id || 0,
-      teacherId: teachers[0]?.id || 0
-    })
-    setShowModal(true)
-  }
 
   const handleEdit = (classroom: Classroom) => {
     setEditingClassroom(classroom)
@@ -91,7 +79,7 @@ const ClassroomsPage = () => {
       schoolYear: classroom.schoolYear,
       description: classroom.description,
       subjectId: classroom.subjectId,
-      teacherId: classroom.teacherId
+      password: '' // Keep empty unless changing
     })
     setShowModal(true)
   }
@@ -108,15 +96,12 @@ const ClassroomsPage = () => {
         gradeLevel: formData.gradeLevel,
         schoolYear: formData.schoolYear,
         description: formData.description,
-        subjectId: formData.subjectId
+        subjectId: formData.subjectId,
+        password: formData.password
       }
-      if (editingClassroom) {
-        await classroomAPI.update(editingClassroom.id, payload)
-        toast.success('Cập nhật lớp học thành công!')
-      } else {
-        await classroomAPI.create(payload)
-        toast.success('Tạo lớp học thành công!')
-      }
+      if (!editingClassroom) return
+      await classroomAPI.update(editingClassroom.id, payload)
+      toast.success('Cập nhật lớp học thành công!')
       setShowModal(false)
       fetchData()
     } catch (error: any) {
@@ -169,9 +154,7 @@ const ClassroomsPage = () => {
               <span className={styles.statValue}>{classrooms.filter(c => c.isActive).length}</span>
             </div>
           </div>
-          <button className={styles.btnCreate} onClick={handleCreate}>
-            <span>➕</span> Tạo lớp học
-          </button>
+          {/* Admin doesn't create classrooms, only moderates */}
         </div>
 
         <div className={styles.searchBox}>
@@ -191,8 +174,7 @@ const ClassroomsPage = () => {
           <EmptyState
             icon="🏫"
             title="Chưa có lớp học nào"
-            message='Nhấn "Tạo lớp học" để thêm lớp học đầu tiên.'
-            action={{ label: '+ Tạo lớp học', onClick: handleCreate }}
+            message="Dữ liệu lớp học sẽ được hiển thị khi giáo viên tạo lớp."
           />
         ) : (
           <div className={styles.tableCard}>
@@ -335,11 +317,18 @@ const ClassroomsPage = () => {
                     rows={3}
                   />
                 </div>
+                <div className={styles.formGroup}>
+                  <label>Mật khẩu tham gia lớp</label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Nhập mật khẩu mới nếu muốn thay đổi"
+                  />
+                </div>
                 <div className={styles.formActions}>
                   <button type="button" className={styles.btnCancel} onClick={() => setShowModal(false)}>Hủy</button>
-                  <button type="submit" className={styles.btnSubmit}>
-                    {editingClassroom ? 'Cập nhật' : 'Tạo mới'}
-                  </button>
+                  <button type="submit" className={styles.btnSubmit}>Cập nhật</button>
                 </div>
               </form>
             </div>

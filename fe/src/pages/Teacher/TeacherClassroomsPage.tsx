@@ -382,7 +382,7 @@ const TeacherClassroomsPage = () => {
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder={editingClassroom ? 'Nếu muốn đổi mật khẩu, nhập mật khẩu mới' : 'Học sinh dùng mật khẩu này để tham gia'}
+                  placeholder={editingClassroom ? 'Nhập mật khẩu mới nếu muốn thay đổi' : 'Học sinh dùng mật khẩu này để tham gia'}
                   required={!editingClassroom}
                 />
               </div>
