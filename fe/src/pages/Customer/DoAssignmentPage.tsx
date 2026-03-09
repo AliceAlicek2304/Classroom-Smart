@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import Header from '../../components/Header/Header'
-import Footer from '../../components/Footer/Footer'
+import StudentLayout from '../../components/StudentLayout/StudentLayout'
 import assignmentAPI, {
   type AssignmentResponse,
   type SubmissionResponse,
@@ -93,13 +92,11 @@ const DoAssignmentPage = () => {
 
   if (loading) {
     return (
-      <div className={styles.wrapper}>
-        <Header />
-        <main className={styles.main}>
+      <StudentLayout>
+        <div className={styles.main}>
           <p style={{ color: 'var(--gray)', padding: '2rem 0' }}>Đang tải bài tập...</p>
-        </main>
-        <Footer />
-      </div>
+        </div>
+      </StudentLayout>
     )
   }
 
@@ -114,8 +111,7 @@ const DoAssignmentPage = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <Header />
+    <StudentLayout>
       <main className={styles.main}>
 
         {/* ── Page header ── */}
@@ -280,9 +276,8 @@ const DoAssignmentPage = () => {
         )}
 
       </main>
-      <Footer />
       {confirmDialog}
-    </div>
+    </StudentLayout>
   )
 }
 

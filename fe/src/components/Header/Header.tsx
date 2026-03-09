@@ -51,7 +51,7 @@ const Header = () => {
             <div className={styles.logoIcon}>�</div>
             <div className={styles.logoText}>
               <span className={styles.logoMain}>Classroom Smart</span>
-              <span className={styles.logoSub}>THCS Ngô Quyền</span>
+              <span className={styles.logoSub}>Hệ thống quản lý học tập</span>
             </div>
           </Link>
 

@@ -6,7 +6,7 @@ const Footer = () => {
       <div className={styles.footerContent}>
         <div className={styles.footerBrand}>
           <h3>🎓 Classroom Smart</h3>
-          <p>Hệ thống quản lý học tập số của Trường THCS Ngô Quyền.</p>
+          <p>Hệ thống quản lý học tập số thông minh.</p>
           <div className={styles.socialLinks}>
             <a href="#" aria-label="Facebook">📘</a>
             <a href="#" aria-label="YouTube">▶️</a>
@@ -44,7 +44,7 @@ const Footer = () => {
         </div>
       </div>
       <div className={styles.footerBottom}>
-        <p>© 2026 Classroom Smart — Trường THCS Ngô Quyền. Tất cả quyền được bảo lưu.</p>
+        <p>© 2026 Classroom Smart — Hệ thống quản lý học tập. Tất cả quyền được bảo lưu.</p>
       </div>
     </footer>
   )

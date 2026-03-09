@@ -430,7 +430,7 @@ const TeacherAssignmentsPage = () => {
           >
             <div className={styles.modalHeader}>
               <h2>{editingId ? 'Chỉnh sửa bài tập' : 'Tạo bài tập mới'}</h2>
-              <button className={styles.modalClose} onClick={() => setShowModal(false)}>✕</button>
+              <button className={styles.btnClose} onClick={() => setShowModal(false)}>✕</button>
             </div>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
@@ -772,7 +772,7 @@ const TeacherAssignmentsPage = () => {
             >
               <div className={styles.modalHeader}>
                 <h2>👥 Bài nộp: {submissionsAssignment.title}</h2>
-                <button className={styles.modalClose} onClick={() => setShowSubmissionsModal(false)}>✕</button>
+                <button className={styles.btnClose} onClick={() => setShowSubmissionsModal(false)}>✕</button>
               </div>
 
               {/* Filters */}
@@ -896,7 +896,7 @@ const TeacherAssignmentsPage = () => {
                 <h2 style={{ margin: 0 }}>📋 Bài làm của {detailSubmission.studentName}</h2>
                 <div style={{ fontSize: '0.85rem', opacity: 0.7, marginTop: 2 }}>{detailSubmission.assignmentTitle}</div>
               </div>
-              <button className={styles.modalClose} onClick={() => setShowDetailModal(false)}>✕</button>
+              <button className={styles.btnClose} onClick={() => setShowDetailModal(false)}>✕</button>
             </div>
 
             {/* Score banner */}

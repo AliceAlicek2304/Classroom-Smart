@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import Header from '../../components/Header/Header'
-import Footer from '../../components/Footer/Footer'
+import StudentLayout from '../../components/StudentLayout/StudentLayout'
 import examAPI, {
   type ExamResponse,
   type ExamSubmissionResponse,
@@ -259,21 +258,18 @@ const DoExamPage = () => {
   // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className={styles.wrapper}>
-        <Header />
+      <StudentLayout>
         <main className={styles.main}>
           <p style={{ color: 'var(--gray)', padding: '2rem 0' }}>Đang tải bài kiểm tra...</p>
         </main>
-        <Footer />
-      </div>
+      </StudentLayout>
     )
   }
 
   if (!exam) return null
 
   return (
-    <div className={styles.wrapper}>
-      <Header />
+    <StudentLayout>
       <main className={styles.main}>
 
         {/* ── Page header ──────────────────────────────────────────── */}
@@ -541,9 +537,8 @@ const DoExamPage = () => {
         )}
 
       </main>
-      <Footer />
       {confirmDialog}
-    </div>
+    </StudentLayout>
   )
 }
 

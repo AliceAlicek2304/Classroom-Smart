@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import Header from '../../components/Header/Header'
-import Footer from '../../components/Footer/Footer'
+import { useLocation } from 'react-router-dom'
+import StudentLayout from '../../components/StudentLayout/StudentLayout'
 import CustomerClassroomsTab from './tabs/CustomerClassroomsTab'
 import CustomerDocsTab from './tabs/CustomerDocsTab'
 import CustomerAssignmentsTab from './tabs/CustomerAssignmentsTab'
 import CustomerGradesTab from './tabs/CustomerGradesTab'
-import profile from '../Common/ProfilePage.module.css'
+import styles from '../Admin/Admin.module.css'
 
 type TabType = 'mine' | 'all' | 'docs' | 'assignments' | 'grades'
 
@@ -28,74 +27,33 @@ const TAB_HEADERS: Record<TabType, { icon: string; title: string; subtitle: stri
 
 const CustomerClassroomsPage = () => {
   const location = useLocation()
-  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<TabType>(() => getTabFromPath(location.pathname))
 
   useEffect(() => {
     setActiveTab(getTabFromPath(location.pathname))
   }, [location.pathname])
 
-  const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab)
-    const paths: Record<TabType, string> = {
-      mine:        '/customer/my-classrooms',
-      all:         '/customer/classrooms',
-      docs:        '/customer/docs',
-      assignments: '/customer/assignments',
-      grades:      '/customer/grades',
-    }
-    navigate(paths[tab])
-  }
-
   const { icon, title, subtitle } = TAB_HEADERS[activeTab]
 
   return (
-    <div className={profile.profileWrapper}>
-      <Header />
-
-      <main className={profile.profileContent}>
-        {/* Sidebar */}
-        <aside className={profile.internalSidebar}>
-          <div className={profile.sidebarTitle}>📚 Khóa học</div>
-          <nav className={profile.sidebarNav}>
-            {([
-              ['mine',        '🎒', 'Lớp của tôi'],
-              ['all',         '🏫', 'Tất cả các lớp'],
-              ['docs',        '📖', 'Tài liệu'],
-              ['assignments', '📝', 'Bài tập & Kiểm tra'],
-              ['grades',      '📈', 'Bảng điểm'],
-            ] as [TabType, string, string][]).map(([tab, navIcon, label]) => (
-              <div
-                key={tab}
-                className={`${profile.navItem} ${activeTab === tab ? profile.navItemActive : ''}`}
-                onClick={() => handleTabChange(tab)}
-              >
-                <span className={profile.navIcon}>{navIcon}</span>
-                {label}
-              </div>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main panel */}
-        <section>
-          <div className={profile.mainPanel}>
-            <div className={profile.panelHeader}>
-              <h2>{icon} {title}</h2>
-              <p>{subtitle}</p>
-            </div>
-
-            {activeTab === 'mine'        && <CustomerClassroomsTab mode="mine" />}
-            {activeTab === 'all'         && <CustomerClassroomsTab mode="all" />}
-            {activeTab === 'docs'        && <CustomerDocsTab />}
-            {activeTab === 'assignments' && <CustomerAssignmentsTab />}
-            {activeTab === 'grades'      && <CustomerGradesTab />}
+    <StudentLayout>
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <div>
+            <h1 className={styles.title}>{icon} {title}</h1>
+            <p className={styles.subtitle}>{subtitle}</p>
           </div>
-        </section>
-      </main>
+        </div>
 
-      <Footer />
-    </div>
+        <div className={styles.card}>
+          {activeTab === 'mine'        && <CustomerClassroomsTab mode="mine" />}
+          {activeTab === 'all'         && <CustomerClassroomsTab mode="all" />}
+          {activeTab === 'docs'        && <CustomerDocsTab />}
+          {activeTab === 'assignments' && <CustomerAssignmentsTab />}
+          {activeTab === 'grades'      && <CustomerGradesTab />}
+        </div>
+      </div>
+    </StudentLayout>
   )
 }
 

@@ -38,13 +38,13 @@ const HomePage = () => {
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <div className={styles.badge}>
-            🏫 THCS Ngô Quyền
+            Hệ thống quản lý học tập
           </div>
 
           <h1 className={styles.heroTitle}>
             Hệ thống quản lý<br />
             <span className={styles.highlight}>học tập</span><br />
-            THCS Ngô Quyền
+            thông minh
           </h1>
 
           <p className={styles.heroSubtitle}>

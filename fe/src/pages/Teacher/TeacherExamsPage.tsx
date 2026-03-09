@@ -461,7 +461,7 @@ const TeacherExamsPage = () => {
           >
             <div className={styles.modalHeader}>
               <h2>{editingId ? 'Chỉnh sửa bài kiểm tra' : 'Tạo bài kiểm tra mới'}</h2>
-              <button className={styles.modalClose} onClick={() => setShowModal(false)}>✕</button>
+              <button className={styles.btnClose} onClick={() => setShowModal(false)}>✕</button>
             </div>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
@@ -820,7 +820,7 @@ const TeacherExamsPage = () => {
             >
               <div className={styles.modalHeader}>
                 <h2>👥 Bài nộp: {submissionsExam.title}</h2>
-                <button className={styles.modalClose} onClick={() => setShowSubmissionsModal(false)}>✕</button>
+                <button className={styles.btnClose} onClick={() => setShowSubmissionsModal(false)}>✕</button>
               </div>
 
               <div style={{ padding: '1rem 1.5rem 0', display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -942,7 +942,7 @@ const TeacherExamsPage = () => {
                 <h2 style={{ margin: 0 }}>📋 Bài làm của {detailSubmission.studentName}</h2>
                 <div style={{ fontSize: '0.85rem', opacity: 0.7, marginTop: 2 }}>{detailSubmission.examTitle}</div>
               </div>
-              <button className={styles.modalClose} onClick={() => setShowDetailModal(false)}>✕</button>
+              <button className={styles.btnClose} onClick={() => setShowDetailModal(false)}>✕</button>
             </div>
 
             <div style={{

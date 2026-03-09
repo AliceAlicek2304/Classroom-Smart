@@ -19,7 +19,7 @@ const StudentsModal = ({ classroomId, classroomName, onClose, onUpdate }: Studen
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const toast = useToast()
-  const { confirm, ConfirmDialog } = useConfirm()
+  const { confirm, confirmDialog } = useConfirm()
 
   useEffect(() => {
     fetchData()
@@ -237,7 +237,7 @@ const StudentsModal = ({ classroomId, classroomName, onClose, onUpdate }: Studen
           )}
         </div>
       </div>
-      <ConfirmDialog />
+      {confirmDialog}
     </div>
   )
 }
